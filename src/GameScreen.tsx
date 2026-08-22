@@ -55,7 +55,7 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
       .channel(`room_${roomCode}`)
       .on('postgres_changes', 
         { event: 'UPDATE', schema: 'public', table: 'matches', filter: `room_code=eq.${roomCode}` },
-        (payload) => {
+        (payload: any) => {
           const match = payload.new
           
           if (match.status === 'playing') setOpponentConnected(true)
