@@ -1,14 +1,16 @@
 /* Resets and container constraints */
+/* Resets and container constraints */
 .game-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100dvh; /* Dynamic height adapts to mobile URL bars */
   max-width: 450px; 
   margin: 0 auto;
   background-color: #1e272e;
   position: relative;
   overflow: hidden;
   font-family: system-ui, sans-serif;
+  touch-action: none; /* Prevents accidental pull-to-refresh on mobile */
 }
 
 /* Zone 1: Opponent */

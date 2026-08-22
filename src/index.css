@@ -1,5 +1,6 @@
 body, html {
   margin: 0;
   padding: 0;
-  background-color: #000; /* Keeps the edges black on wide screens */
+  background-color: #000; 
+  overflow: hidden; /* Added this to lock the background */
 }

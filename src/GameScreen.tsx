@@ -24,24 +24,19 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
   const [score, setScore] = useState({ player: 0, opponent: 0 })
   const [roundResult, setRoundResult] = useState<string | null>(null)
   
-  // Multiplayer specific state
   const [isPlayer1, setIsPlayer1] = useState<boolean>(true)
   const [opponentConnected, setOpponentConnected] = useState<boolean>(false)
 
-  // --- MULTIPLAYER SETUP & LISTENER ---
   useEffect(() => {
     if (mode !== 'multiplayer' || !roomCode) return
 
     const setupMatch = async () => {
-      // Check if room exists
       const { data } = await supabase.from('matches').select('*').eq('room_code', roomCode).single()
 
       if (!data) {
-        // Room doesn't exist, I am Player 1
         setIsPlayer1(true)
         await supabase.from('matches').insert([{ room_code: roomCode, status: 'waiting' }])
       } else {
-        // Room exists, I am Player 2
         setIsPlayer1(false)
         setOpponentConnected(true)
         await supabase.from('matches').update({ status: 'playing' }).eq('room_code', roomCode)
@@ -50,7 +45,6 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
 
     setupMatch()
 
-    // Listen to changes in the Supabase database
     const channel = supabase
       .channel(`room_${roomCode}`)
       .on('postgres_changes', 
@@ -60,12 +54,10 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
           
           if (match.status === 'playing') setOpponentConnected(true)
 
-          // If both players made a move, resolve the round!
           if (match.player1_move !== null && match.player2_move !== null) {
             const myMove = isPlayer1 ? match.player1_move : match.player2_move
             const theirMove = isPlayer1 ? match.player2_move : match.player1_move
             
-            // Only resolve if we haven't already seen this result
             setOpponentCardIndex(theirMove)
             const result = checkWinner(myMove, theirMove)
             
@@ -80,7 +72,6 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
             }
           }
 
-          // Listen for a board reset (Next Round)
           if (match.player1_move === null && match.player2_move === null && match.status === 'playing') {
             setConfirmedCardIndex(null)
             setOpponentCardIndex(null)
@@ -90,12 +81,9 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
       )
       .subscribe()
 
-    // Cleanup when leaving the room
     return () => { supabase.removeChannel(channel) }
   }, [mode, roomCode, isPlayer1])
 
-
-  // --- GAME LOGIC ---
   const checkWinner = (player: number, opponent: number) => {
     if (player === opponent) return 'draw'
     const winsAgainst: Record<number, number[]> = {
@@ -104,7 +92,6 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
     return winsAgainst[player].includes(opponent) ? 'win' : 'lose'
   }
 
-  // --- INTERACTIONS ---
   const handleSelect = (index: number) => {
     if (confirmedCardIndex === null) setSelectedCardIndex(index)
   }
@@ -114,32 +101,42 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
     e.dataTransfer.setData('cardIndex', index.toString())
   }
 
-  const handleDrop = async (e: React.DragEvent) => {
+  // Unified function to actually play the card (used by drag AND tap)
+  const playCard = async (indexToPlay: number) => {
+    setConfirmedCardIndex(indexToPlay)
+    setSelectedCardIndex(null)
+    
+    if (mode === 'vs-ai') {
+      setTimeout(() => {
+        const randomChoice = Math.floor(Math.random() * 5)
+        setOpponentCardIndex(randomChoice)
+        const result = checkWinner(indexToPlay, randomChoice)
+        if (result === 'win') {
+          setRoundResult('WIN! 🎉'); setScore(p => ({ ...p, player: p.player + 1 }))
+        } else if (result === 'lose') {
+          setRoundResult('LOSE! 💀'); setScore(p => ({ ...p, opponent: p.opponent + 1 }))
+        } else {
+          setRoundResult('DRAW! 🤝')
+        }
+      }, 800)
+    } else {
+      const updateField = isPlayer1 ? { player1_move: indexToPlay } : { player2_move: indexToPlay }
+      await supabase.from('matches').update(updateField).eq('room_code', roomCode)
+    }
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     const draggedIndex = parseInt(e.dataTransfer.getData('cardIndex'), 10)
-    
     if (!isNaN(draggedIndex) && confirmedCardIndex === null) {
-      setConfirmedCardIndex(draggedIndex)
-      setSelectedCardIndex(null)
-      
-      if (mode === 'vs-ai') {
-        setTimeout(() => {
-          const randomChoice = Math.floor(Math.random() * 5)
-          setOpponentCardIndex(randomChoice)
-          const result = checkWinner(draggedIndex, randomChoice)
-          if (result === 'win') {
-            setRoundResult('WIN! 🎉'); setScore(p => ({ ...p, player: p.player + 1 }))
-          } else if (result === 'lose') {
-            setRoundResult('LOSE! 💀'); setScore(p => ({ ...p, opponent: p.opponent + 1 }))
-          } else {
-            setRoundResult('DRAW! 🤝')
-          }
-        }, 800)
-      } else {
-        // MULTIPLAYER: Push move to database
-        const updateField = isPlayer1 ? { player1_move: draggedIndex } : { player2_move: draggedIndex }
-        await supabase.from('matches').update(updateField).eq('room_code', roomCode)
-      }
+      playCard(draggedIndex)
+    }
+  }
+
+  // New handler for mobile tapping
+  const handleArenaClick = () => {
+    if (selectedCardIndex !== null && confirmedCardIndex === null) {
+      playCard(selectedCardIndex)
     }
   }
 
@@ -149,11 +146,7 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
       setOpponentCardIndex(null)
       setRoundResult(null)
     } else {
-      // MULTIPLAYER: Tell the database to reset the board
-      await supabase
-        .from('matches')
-        .update({ player1_move: null, player2_move: null })
-        .eq('room_code', roomCode)
+      await supabase.from('matches').update({ player1_move: null, player2_move: null }).eq('room_code', roomCode)
     }
   }
 
@@ -180,7 +173,13 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
         )}
       </div>
 
-      <div className="arena-area" onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
+      <div 
+        className="arena-area" 
+        onDragOver={(e) => e.preventDefault()} 
+        onDrop={handleDrop}
+        onClick={handleArenaClick} // Mobile tap support!
+        style={{ cursor: selectedCardIndex !== null ? 'pointer' : 'default' }}
+      >
         <div className="score-board">{score.player} - {score.opponent}</div>
 
         {roundResult && (
@@ -198,7 +197,10 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
             <img src={myCards[confirmedCardIndex]} alt="Your Confirmed Card" />
           </div>
         ) : (
-          <div className="arena-hint">Drag your card here</div>
+          <div className="arena-hint">
+             {/* Dynamic text telling the player to tap */}
+             {selectedCardIndex !== null ? "Tap here to play!" : "Drag or tap a card"}
+          </div>
         )}
       </div>
 
