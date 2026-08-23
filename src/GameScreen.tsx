@@ -186,9 +186,11 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
   }
 
   const handleArenaClick = () => {
-    if (selectedCardIndex !== null && confirmedCardIndex === null) playCard(selectedCardIndex)
+    // Only allow placing a card if the previous round has completely cleared
+    if (selectedCardIndex !== null && confirmedCardIndex === null && roundResult === null) {
+      playCard(selectedCardIndex)
+    }
   }
-
   const handleTakeBack = async () => {
     if (roundResult === null || playerRetracting || confirmedCardIndex === null) return
     setPlayerRetracting(true)
