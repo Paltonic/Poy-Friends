@@ -1,0 +1,24 @@
+/* src/HomeScreen.css */
+
+.home-container { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; max-width: 450px; margin: 0 auto; background: radial-gradient(circle at top right, #2d3436 0%, #171e22 50%, #000 100%); color: white; padding: 20px; box-sizing: border-box; }
+.game-title { font-size: 3.5rem; font-weight: 900; margin: 0 0 10px 0; text-align: center; background: linear-gradient(135deg, #f1c40f, #f39c12, #e67e22); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 8px 15px rgba(0,0,0,0.6); }
+.subtitle { font-size: 1.2rem; color: #bdc3c7; margin-bottom: 50px; text-transform: uppercase; letter-spacing: 2px; }
+
+.menu-buttons { display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 320px; }
+.menu-btn { width: 100%; padding: 18px; font-size: 1.2rem; font-weight: 800; border-radius: 16px; border: none; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; }
+.menu-btn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0px 0px rgba(0,0,0,0); }
+.menu-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.primary-btn { background: linear-gradient(135deg, #0984e3, #0652dd); color: white; box-shadow: 0 6px 0 #053ca3, 0 10px 20px rgba(0,0,0,0.4); }
+.secondary-btn { background: linear-gradient(135deg, #00b894, #00cec9); color: white; box-shadow: 0 6px 0 #009988, 0 10px 20px rgba(0,0,0,0.4); }
+.outline-btn { background-color: rgba(255,255,255,0.05); color: #bdc3c7; border: 2px solid #636e72; backdrop-filter: blur(4px); }
+.text-btn { background: none; border: none; color: #b2bec3; font-size: 1rem; padding: 10px; cursor: pointer; text-decoration: underline; }
+
+.mt-4 { margin-top: 24px; } .mt-2 { margin-top: 12px; }
+
+/* Modals */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(8px); }
+.modal-content { background: linear-gradient(135deg, #2d3436, #1e272e); padding: 35px 25px; border-radius: 24px; width: 85%; max-width: 350px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); }
+.code-display { font-size: 4.5rem; font-weight: 900; letter-spacing: 8px; color: #f1c40f; margin: 20px 0; font-family: 'Courier New', monospace; text-shadow: 0 0 20px rgba(241, 196, 15, 0.4); }
+.code-input { width: 100%; font-size: 2.5rem; text-align: center; letter-spacing: 8px; padding: 20px; border-radius: 16px; border: 2px solid #636e72; background-color: rgba(0,0,0,0.3); color: white; font-family: monospace; box-sizing: border-box; margin-top: 20px; }
+.code-input:focus { outline: none; border-color: #00b894; }

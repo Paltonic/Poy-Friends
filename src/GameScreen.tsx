@@ -1,6 +1,6 @@
-// src/GameScreen.tsx
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from './supabaseClient'
+import './GameScreen.css'
 
 import puyImg from './assets/PUY.png'
 import payImg from './assets/PAY.png'
