@@ -192,32 +192,51 @@
 /* --- ULTIMATE BATTLE ANIMATIONS & FX ---   */
 /* ========================================= */
 
-.attack-up {
-  animation: slashUp 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important;
+/* --- Smoother Grow (Win) & Static Dim (Lose) --- */
+.grow-win {
+  animation: growWinAnim 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
   z-index: 50 !important;
 }
 
-.attack-down {
-  animation: slashDown 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important;
-  z-index: 50 !important;
+/* Kept the class name so you don't need to change the TSX, 
+   but removed the animation so it just stays still and dims. */
+.shrink-lose {
+  transform: scale(1.3) !important; /* Locks it at the initial slammed size */
+  z-index: 10 !important; /* Keeps it behind the winning card */
 }
 
-@keyframes slashUp {
-  0% { transform: translateY(0) scale(1.3) rotate(0); }
-  20% { transform: translate(-20px, 20px) scale(1.2) rotate(-15deg); } 
-  45% { transform: translate(40px, -45vh) scale(1.6) rotate(35deg); } 
-  65% { transform: translate(40px, -45vh) scale(1.6) rotate(35deg); } 
-  100% { transform: translateY(0) scale(1.3) rotate(0); } 
+@keyframes growWinAnim {
+  0% { transform: scale(1.3); }
+  100% { transform: scale(1.6); box-shadow: 0 15px 30px rgba(46, 204, 113, 0.4); } 
 }
 
-@keyframes slashDown {
-  0% { transform: translateY(0) scale(1.3) rotate(0); }
-  20% { transform: translate(-20px, -20px) scale(1.2) rotate(15deg); } 
-  45% { transform: translate(40px, 45vh) scale(1.6) rotate(-35deg); } 
-  65% { transform: translate(40px, 45vh) scale(1.6) rotate(-35deg); } 
-  100% { transform: translateY(0) scale(1.3) rotate(0); } 
+/* --- Restored Draw Shake (Twiggle) --- */
+.clash-shake {
+  animation: clashShakeAnim 0.6s ease-in-out both !important;
 }
 
+@keyframes clashShakeAnim {
+  0%, 100% { transform: scale(1.3) rotate(0deg) translateX(0); }
+  15% { transform: scale(1.3) rotate(-5deg) translateX(-4px); }
+  30% { transform: scale(1.3) rotate(4deg) translateX(4px); }
+  45% { transform: scale(1.3) rotate(-3deg) translateX(-2px); }
+  60% { transform: scale(1.3) rotate(2deg) translateX(2px); }
+  75% { transform: scale(1.3) rotate(-1deg) translateX(-1px); }
+}
+
+/* --- Defeated Dim Effect --- */
+.defeated-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 8px;
+  opacity: 0; z-index: 15; pointer-events: none;
+  animation: fadeInDefeat 0.4s forwards; 
+  animation-delay: 0.1s; 
+}
+
+@keyframes fadeInDefeat { to { opacity: 1; } }
+
+/* Retract and Interaction CSS remains the same below this... */
 .clickable-card {
   cursor: pointer;
   z-index: 60;
@@ -226,7 +245,7 @@
 }
 
 .clickable-card:hover, .clickable-card:active {
-  transform: scale(1.35) !important;
+  transform: scale(1.75) !important;
   box-shadow: 0 0 40px rgba(0, 255, 200, 0.8), 0 0 15px rgba(0, 255, 200, 0.5) !important;
 }
 
@@ -239,42 +258,6 @@
 .card-retract-opponent { 
   animation: retractCardOpponent 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards !important; 
   transition: none !important; 
-}
-
-/* --- Scar & Slash Mark Reveal --- */
-.scratch-mark {
-  position: absolute; 
-  top: -5%; left: -5%; width: 110%; height: 110%; 
-  z-index: 20; pointer-events: none;
-}
-
-.scratch-mark-up {
-  clip-path: circle(0% at 0% 100%);
-  animation: revealUp 0.15s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
-  animation-delay: 0.22s; 
-}
-
-.scratch-mark-down {
-  clip-path: circle(0% at 0% 0%);
-  animation: revealDown 0.15s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
-  animation-delay: 0.22s; 
-}
-
-.scratch-icon {
-  width: 100%; height: 100%; 
-  filter: drop-shadow(1px 2px 2px rgba(0,0,0,0.8));
-}
-
-@keyframes revealUp { to { clip-path: circle(200% at 0% 100%); } }
-@keyframes revealDown { to { clip-path: circle(200% at 0% 0%); } }
-
-.defeated-overlay {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  border-radius: 8px;
-  opacity: 0; z-index: 15; pointer-events: none;
-  animation: fadeInDefeat 0.2s forwards;
-  animation-delay: 0.3s; 
 }
 
 @keyframes grabFist {
@@ -292,5 +275,3 @@
   0%, 50% { transform: scale(1.2); opacity: 1; top: 18%; }
   100% { transform: scale(0.5); opacity: 0; top: -10vh; } 
 }
-
-@keyframes fadeInDefeat { to { opacity: 1; } }

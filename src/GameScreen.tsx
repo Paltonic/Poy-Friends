@@ -24,72 +24,6 @@ const CartoonFistSVG = ({ className = '' }: { className?: string }) => (
   </svg>
 )
 
-const ScratchUpSVG = () => (
-  <div className="scratch-mark scratch-mark-up">
-    <svg viewBox="0 0 100 100" className="scratch-icon" preserveAspectRatio="none" overflow="visible">
-      <defs>
-        <filter id="flesh-tear-up" x="-10%" y="-10%" width="120%" height="120%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="2" result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="3.5" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-        <filter id="blood-blur-up" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="2.5" />
-        </filter>
-        <linearGradient id="fade-up" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#d63031" stopOpacity="0" />
-          <stop offset="12%" stopColor="#d63031" stopOpacity="1" />
-          <stop offset="88%" stopColor="#d63031" stopOpacity="1" />
-          <stop offset="100%" stopColor="#d63031" stopOpacity="0" />
-        </linearGradient>
-        <linearGradient id="fade-black-up" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="5%" stopColor="#050000" stopOpacity="0" />
-          <stop offset="15%" stopColor="#050000" stopOpacity="1" />
-          <stop offset="85%" stopColor="#050000" stopOpacity="1" />
-          <stop offset="95%" stopColor="#050000" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <g filter="url(#flesh-tear-up)">
-        <path d="M 5,95 Q 28,52 95,5 Q 72,28 5,95 Z" fill="url(#fade-up)" filter="url(#blood-blur-up)" transform="translate(1, 1)" />
-        <path d="M 5,95 Q 28,52 95,5 Q 72,28 5,95 Z" fill="url(#fade-up)" transform="translate(1, 1)" />
-        <path d="M 7,93 Q 33,49 93,7 Q 69,33 7,93 Z" fill="url(#fade-black-up)" />
-      </g>
-    </svg>
-  </div>
-)
-
-const ScratchDownSVG = () => (
-  <div className="scratch-mark scratch-mark-down">
-    <svg viewBox="0 0 100 100" className="scratch-icon" preserveAspectRatio="none" overflow="visible">
-      <defs>
-        <filter id="flesh-tear-down" x="-10%" y="-10%" width="120%" height="120%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="2" result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="3.5" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-        <filter id="blood-blur-down" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="2.5" />
-        </filter>
-        <linearGradient id="fade-down" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#d63031" stopOpacity="0" />
-          <stop offset="12%" stopColor="#d63031" stopOpacity="1" />
-          <stop offset="88%" stopColor="#d63031" stopOpacity="1" />
-          <stop offset="100%" stopColor="#d63031" stopOpacity="0" />
-        </linearGradient>
-        <linearGradient id="fade-black-down" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="5%" stopColor="#050000" stopOpacity="0" />
-          <stop offset="15%" stopColor="#050000" stopOpacity="1" />
-          <stop offset="85%" stopColor="#050000" stopOpacity="1" />
-          <stop offset="95%" stopColor="#050000" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <g filter="url(#flesh-tear-down)">
-        <path d="M 5,5 Q 28,48 95,95 Q 72,72 5,5 Z" fill="url(#fade-down)" filter="url(#blood-blur-down)" transform="translate(1, 1)" />
-        <path d="M 5,5 Q 28,48 95,95 Q 72,72 5,5 Z" fill="url(#fade-down)" transform="translate(1, 1)" />
-        <path d="M 7,7 Q 33,51 93,93 Q 69,69 7,7 Z" fill="url(#fade-black-down)" />
-      </g>
-    </svg>
-  </div>
-)
-
 export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) {
   const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(null)
   const [confirmedCardIndex, setConfirmedCardIndex] = useState<number | null>(null)
@@ -335,7 +269,8 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
         {/* Opponent's Played Card */}
         {opponentCardIndex !== null && (
           <div className={`opponent-played-wrapper 
-            ${attackState === 'opponent' && !opponentRetracting ? 'attack-down' : ''} 
+            ${attackState === 'opponent' && !opponentRetracting ? 'grow-win' : ''} 
+            ${attackState === 'player' && !opponentRetracting ? 'shrink-lose' : ''}
             ${attackState === 'draw' && !opponentRetracting ? 'clash-shake' : ''}
             ${opponentRetracting ? 'card-retract-opponent' : ''}
           `}>
@@ -343,7 +278,6 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
                 <div className="card face front card-back-design"></div>
                 <div className="card face back">
                   <img src={myCards[opponentCardIndex]} alt="Opponent Card" style={{ transform: 'rotate(180deg)' }} />
-                  {attackState === 'player' && <ScratchUpSVG />}
                   {attackState === 'player' && <div className="defeated-overlay"></div>}
                 </div>
              </div>
@@ -361,7 +295,8 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
         {confirmedCardIndex !== null && (
           <div 
             className={`card player-played-card 
-              ${attackState === 'player' && !playerRetracting ? 'attack-up' : ''} 
+              ${attackState === 'player' && !playerRetracting ? 'grow-win' : ''} 
+              ${attackState === 'opponent' && !playerRetracting ? 'shrink-lose' : ''}
               ${attackState === 'draw' && !playerRetracting ? 'clash-shake' : ''}
               ${playerRetracting ? 'card-retract-player' : ''}
               ${roundResult !== null && !playerRetracting ? 'clickable-card' : ''}
@@ -372,7 +307,6 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
             }}
           >
             <img src={myCards[confirmedCardIndex]} alt="Your Card" />
-            {attackState === 'opponent' && <ScratchDownSVG />}
             {attackState === 'opponent' && <div className="defeated-overlay"></div>}
           </div>
         )}
