@@ -54,11 +54,11 @@
 
 /* --- Modern Glass Card Style --- */
 .modern-card {
-  background: rgba(20, 30, 25, 0.7); /* Deep tinted glass */
+  background: rgba(20, 30, 25, 0.7);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px; /* Smooth squircles */
+  border-radius: 24px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -91,13 +91,13 @@
 }
 
 /* --- Accents & Glows --- */
-.create-card { color: #55efc4; } /* Mint Green */
+.create-card { color: #55efc4; } 
 .create-card .card-icon { 
   stroke: #55efc4; 
   filter: drop-shadow(0 0 12px rgba(85,239,196,0.6)); 
 }
 
-.join-card { color: #74b9ff; } /* Soft Blue */
+.join-card { color: #74b9ff; } 
 .join-card .card-icon { 
   stroke: #74b9ff; 
   filter: drop-shadow(0 0 12px rgba(116,185,255,0.6)); 
@@ -110,7 +110,7 @@
   justify-content: flex-start;
   padding: 20px 24px;
   gap: 20px;
-  color: #fdcb6e; /* Soft Yellow/Orange */
+  color: #fdcb6e; 
 }
 
 .ai-card-horizontal .card-icon { 
@@ -148,8 +148,8 @@
 /* --- Modern Glass Modals --- */
 .modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  /* Darkened to 0.65 for mobile compatibility */
-  background-color: rgba(0, 0, 0, 0.65); 
+  /* CRANKED UP: 0.85 opacity will heavily obscure the background even without blur */
+  background-color: rgba(0, 0, 0, 0.85); 
   backdrop-filter: blur(12px); 
   -webkit-backdrop-filter: blur(12px);
   display: flex; justify-content: center; align-items: center;
@@ -163,9 +163,8 @@
 }
 
 .modern-modal {
-  /* Increased opacity to 0.85 */
-  background: rgba(30, 40, 35, 0.85); 
-  /* Added local blur to the container directly */
+  /* CRANKED UP: 0.98 makes the container itself practically solid */
+  background: rgba(30, 40, 35, 0.98); 
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   padding: 35px 25px;
@@ -173,8 +172,8 @@
   width: 85%;
   max-width: 320px;
   text-align: center;
-  box-shadow: 0 25px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: #ffffff;
   font-family: 'Inter', 'Segoe UI', sans-serif;
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -217,7 +216,7 @@
   padding: 16px;
   border-radius: 16px;
   border: 2px solid rgba(255, 255, 255, 0.1);
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.4); /* Slightly darker input field */
   color: #ffffff;
   font-weight: bold;
   box-sizing: border-box;
@@ -242,7 +241,7 @@
   outline: none;
   border-color: #55efc4;
   box-shadow: 0 0 15px rgba(85, 239, 196, 0.3);
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .code-input::placeholder {
