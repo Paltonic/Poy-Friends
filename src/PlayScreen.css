@@ -148,7 +148,8 @@
 /* --- Modern Glass Modals --- */
 .modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  /* Darkened to 0.65 for mobile compatibility */
+  background-color: rgba(0, 0, 0, 0.65); 
   backdrop-filter: blur(12px); 
   -webkit-backdrop-filter: blur(12px);
   display: flex; justify-content: center; align-items: center;
@@ -162,7 +163,11 @@
 }
 
 .modern-modal {
-  background: rgba(30, 40, 35, 0.75);
+  /* Increased opacity to 0.85 */
+  background: rgba(30, 40, 35, 0.85); 
+  /* Added local blur to the container directly */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   padding: 35px 25px;
   border-radius: 28px;
   width: 85%;
