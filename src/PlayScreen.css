@@ -11,36 +11,32 @@
   padding: 20px;
   box-sizing: border-box;
   position: relative;
-  background: 
-    radial-gradient(circle at center, rgba(16, 44, 25, 0.45) 0%, rgba(5, 12, 8, 0.95) 100%),
-    linear-gradient(180deg, #0d2818 0%, #05100a 100%);
 }
 
-/* --- Top-Left Glass Back Button --- */
+/* --- Wooden Circular Back Button --- */
 .glass-back-btn {
   position: absolute;
   top: 25px;
   left: 20px;
   width: 50px;
   height: 50px;
-  border-radius: 14px 6px 16px 8px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 3px solid #ffffff;
-  color: #ffffff;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #9C6A41 0%, #704728 100%);
+  border: 3px solid #4A2E15;
+  color: #FFF8DC;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  box-shadow: 0 5px 0 #000;
-  backdrop-filter: blur(6px);
-  transition: all 0.15s ease;
+  box-shadow: 0 6px 0 #4A2E15;
+  transition: all 0.1s ease;
   z-index: 20;
 }
 
-.glass-back-btn svg { width: 22px; height: 22px; }
+.glass-back-btn svg { width: 22px; height: 22px; filter: drop-shadow(0px 2px 0px #3E2723); }
 .glass-back-btn:active {
   transform: translateY(4px);
-  box-shadow: 0 1px 0 #000;
+  box-shadow: 0 2px 0 #4A2E15;
 }
 
 /* --- Asymmetric Layout Grid --- */
@@ -54,42 +50,48 @@
   margin-top: 40px;
 }
 
-/* Base Jagged Container Style */
+/* Base Wooden Card Style */
 .jagged-card {
-  background: rgba(10, 25, 18, 0.75);
-  border: 3.5px solid #ffffff;
-  box-shadow: 0 8px 0 #000, inset 0 0 20px rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(180deg, #9C6A41 0%, #704728 100%);
+  border: 4px solid #4A2E15;
+  border-radius: 16px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   position: relative;
-  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.1s ease;
   font-family: 'Comic Sans MS', 'Helvetica Neue', sans-serif;
   user-select: none;
+  box-shadow: 0 8px 0 #4A2E15, 0 15px 15px rgba(0,0,0,0.3);
+  color: #FFF8DC;
+  text-shadow: 0px 2px 0px #3E2723;
 }
 
 .jagged-card:active {
-  transform: translateY(6px) scale(0.97) rotate(0deg) !important;
-  box-shadow: 0 2px 0 #000 !important;
+  transform: translateY(6px) !important;
+  box-shadow: 0 2px 0 #4A2E15 !important;
 }
 
-/* Side-by-Side Cards */
-.create-card {
-  border-radius: 22px 8px 18px 12px;
-  border-color: #00cec9;
-  color: #00cec9;
-  transform: rotate(-1.5deg);
+/* CSS Leaves for Cards */
+.jagged-card::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 20px;
+  height: 20px;
+  background: #7CB342;
+  border-radius: 0 80% 0 80%;
+  transform: rotate(20deg);
+  border: 2px solid #33691E;
+  z-index: 5;
 }
 
-.join-card {
-  border-radius: 8px 24px 12px 20px;
-  border-color: #a29bfe;
-  color: #a29bfe;
-  transform: rotate(1.5deg);
-}
+/* Slightly different colors for visual hierarchy */
+.create-card { color: #81ecec; }
+.join-card { color: #fab1a0; }
 
 .card-badge {
   position: absolute;
@@ -97,27 +99,24 @@
   right: 10px;
   font-size: 0.65rem;
   font-weight: 900;
-  padding: 3px 6px;
-  background: #000;
-  border-radius: 4px;
+  padding: 4px 8px;
+  background: #4A2E15;
+  color: #FFF8DC;
+  border-radius: 8px;
   letter-spacing: 1px;
 }
 
-.card-icon { width: 38px; height: 38px; margin-bottom: 8px; }
-.card-label { font-size: 1.1rem; font-weight: 900; letter-spacing: 1px; }
+.card-icon { width: 38px; height: 38px; margin-bottom: 8px; filter: drop-shadow(0px 2px 0px #3E2723); }
+.card-label { font-size: 1.1rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
 
-/* Sleeping Horizontal VS AI Card */
+/* Horizontal VS AI Card */
 .ai-card-horizontal {
   grid-column: span 2;
   flex-direction: row;
   justify-content: flex-start;
   padding: 20px 24px;
   gap: 20px;
-  border-radius: 14px 18px 24px 10px;
-  border-color: #fdcb6e;
-  color: #fdcb6e;
-  transform: rotate(-0.5deg);
-  background: linear-gradient(135deg, rgba(20, 20, 15, 0.85), rgba(10, 25, 18, 0.75));
+  color: #ffeaa7;
 }
 
 .ai-icon-wrapper {
@@ -134,7 +133,7 @@
   right: -14px;
   font-size: 0.8rem;
   font-weight: 900;
-  color: #ffeaa7;
+  color: #55efc4;
   animation: floatZzz 2s infinite ease-in-out;
 }
 
@@ -158,40 +157,56 @@
 
 .ai-subtext {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: #FFF8DC;
+  opacity: 0.8;
   font-weight: 800;
   margin-top: 4px;
   letter-spacing: 1px;
 }
 
-/* Modals */
+/* --- Wooden Modals --- */
 .modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex; justify-content: center; align-items: center;
-  z-index: 100; backdrop-filter: blur(8px);
+  z-index: 100; backdrop-filter: blur(4px);
 }
 
 .jagged-modal {
-  background: #0d1a12;
+  background: linear-gradient(180deg, #9C6A41 0%, #704728 100%);
   padding: 30px 20px;
-  border-radius: 20px 10px 24px 12px;
+  border-radius: 20px;
   width: 85%;
   max-width: 320px;
   text-align: center;
-  box-shadow: 0 15px 0 #000;
-  border: 4px solid #ffffff;
-  color: #ffffff;
+  box-shadow: 0 10px 0 #4A2E15, 0 20px 30px rgba(0,0,0,0.5);
+  border: 4px solid #4A2E15;
+  color: #FFF8DC;
   font-family: 'Comic Sans MS', sans-serif;
+  text-shadow: 0px 2px 0px #3E2723;
+  position: relative;
+}
+
+/* Vines on the modal! */
+.jagged-modal::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  right: -10px;
+  width: 30px;
+  height: 30px;
+  background: #7CB342;
+  border-radius: 0 80% 0 80%;
+  transform: rotate(60deg);
+  border: 3px solid #33691E;
 }
 
 .code-display {
   font-size: 3.5rem;
   font-weight: 900;
   letter-spacing: 6px;
-  color: #2ecc71;
+  color: #55efc4;
   margin: 15px 0;
-  text-shadow: 0 4px 0 #000;
 }
 
 .code-input {
@@ -201,32 +216,40 @@
   letter-spacing: 6px;
   padding: 12px;
   border-radius: 12px;
-  border: 3px solid #ffffff;
-  background-color: rgba(0,0,0,0.5);
-  color: white;
+  border: 3px solid #4A2E15;
+  background-color: #f1f2f6;
+  color: #2c3e50;
   font-weight: bold;
   box-sizing: border-box;
   margin: 15px 0;
+  text-shadow: none;
 }
 
 .au-modal-btn {
   background: #2ecc71;
-  color: #000;
+  color: #ffffff;
   font-size: 1.3rem;
   font-weight: 900;
   padding: 14px;
   width: 100%;
-  border: 3px solid #ffffff;
-  border-radius: 10px;
+  border: 3px solid #4A2E15;
+  border-radius: 12px;
   cursor: pointer;
-  box-shadow: 0 5px 0 #000;
+  box-shadow: 0 6px 0 #145c32;
   margin-top: 10px;
+  transition: all 0.1s ease;
+  text-shadow: 0px 2px 0px #145c32;
+}
+
+.au-modal-btn:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #145c32;
 }
 
 .au-modal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .text-btn {
-  background: none; border: none; color: #a29bfe;
+  background: none; border: none; color: #FFF8DC;
   font-size: 0.9rem; padding: 10px; cursor: pointer;
   text-decoration: underline; margin-top: 8px; font-weight: bold;
 }

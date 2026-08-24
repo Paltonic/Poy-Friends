@@ -2,6 +2,9 @@
 import { useState } from 'react'
 import './PlayScreen.css'
 
+// IMPORTANT: Same explicit import
+import bgImage from './assets/forestbg.jpeg'
+
 interface PlayScreenProps {
   onStartGame: (mode: 'vs-ai' | 'multiplayer', code?: string) => void
   onBack: () => void
@@ -20,8 +23,10 @@ export default function PlayScreen({ onStartGame, onBack }: PlayScreenProps) {
   }
 
   return (
-    <div className="play-screen-container">
-      {/* Top Left Jagged Glass Back Button */}
+    <div 
+      className="play-screen-container"
+      style={{ background: `#60a3bc url(${bgImage}) no-repeat center bottom`, backgroundSize: 'cover' }}
+    >
       <button className="glass-back-btn" onClick={onBack} aria-label="Back">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
           <line x1="19" y1="12" x2="5" y2="12" />
@@ -29,10 +34,7 @@ export default function PlayScreen({ onStartGame, onBack }: PlayScreenProps) {
         </svg>
       </button>
 
-      {/* Asymmetric Play Options Grid */}
       <div className="play-grid">
-        
-        {/* CREATE ROOM CARD (Side-by-Side Left) */}
         <div className="jagged-card create-card" onClick={handleCreateRoom}>
           <div className="card-badge">HOST</div>
           <svg className="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -41,7 +43,6 @@ export default function PlayScreen({ onStartGame, onBack }: PlayScreenProps) {
           <span className="card-label">CREATE ROOM</span>
         </div>
 
-        {/* JOIN ROOM CARD (Side-by-Side Right) */}
         <div className="jagged-card join-card" onClick={() => setShowJoinModal(true)}>
           <div className="card-badge">ENTER</div>
           <svg className="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -50,7 +51,6 @@ export default function PlayScreen({ onStartGame, onBack }: PlayScreenProps) {
           <span className="card-label">JOIN ROOM</span>
         </div>
 
-        {/* SLEEPING HORIZONTAL VS AI CARD (Bottom Full-Width) */}
         <div className="jagged-card ai-card-horizontal" onClick={() => onStartGame('vs-ai')}>
           <div className="ai-icon-wrapper">
             <svg className="ai-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -66,10 +66,8 @@ export default function PlayScreen({ onStartGame, onBack }: PlayScreenProps) {
             <span className="ai-subtext">OFFLINE BOT MATCH</span>
           </div>
         </div>
-
       </div>
 
-      {/* CREATE ROOM MODAL */}
       {showCreateModal && (
         <div className="modal-overlay">
           <div className="modal-content jagged-modal">
@@ -84,7 +82,6 @@ export default function PlayScreen({ onStartGame, onBack }: PlayScreenProps) {
         </div>
       )}
 
-      {/* JOIN ROOM MODAL */}
       {showJoinModal && (
         <div className="modal-overlay">
           <div className="modal-content jagged-modal">

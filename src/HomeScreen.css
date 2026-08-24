@@ -11,82 +11,62 @@
   padding: 40px 20px; 
   box-sizing: border-box; 
   position: relative;
-  
-  /* Detailed Jungle Backdrop */
-  background: 
-    radial-gradient(circle at center, rgba(16, 44, 25, 0.45) 0%, rgba(5, 12, 8, 0.92) 100%),
-    repeating-linear-gradient(45deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 2px, transparent 2px, transparent 8px),
-    linear-gradient(180deg, #0d2818 0%, #05100a 100%);
-  background-size: cover;
-  background-position: center;
+  overflow: hidden;
 }
 
+/* --- Scaled Image Logo --- */
 .title-wrapper {
   text-align: center;
   margin-top: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
-.game-title { 
-  font-size: 3.4rem; 
-  font-weight: 900; 
-  margin: 0; 
-  color: #ffffff;
-  text-shadow: 0px 6px 0px #000, 0px 10px 25px rgba(0, 255, 150, 0.3); 
-  letter-spacing: 3px;
-  font-family: 'Comic Sans MS', 'Inter', sans-serif;
-  transform: rotate(-1deg);
+.game-logo-img {
+  width: 100%;
+  max-width: 320px; 
+  height: auto;
+  object-fit: contain;
+  border-radius: 20px; 
+  filter: drop-shadow(0 15px 15px rgba(0,0,0,0.5));
 }
 
-.subtitle { 
-  font-size: 1.1rem; 
-  color: #2ecc71; 
-  margin-top: 8px; 
-  text-transform: uppercase; 
-  letter-spacing: 3px; 
-  font-weight: 800;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-}
-
+/* --- Image Button Menu --- */
 .main-menu { 
   display: flex; 
   flex-direction: column; 
-  gap: 22px; 
+  gap: 15px; /* Shrunk the gap slightly to fit the smaller buttons */
   width: 100%; 
-  max-width: 290px; 
+  max-width: 180px; /* <--- THIS IS THE MAGIC NUMBER! Lower this to make them smaller */
   margin-bottom: 30px;
+  z-index: 10; 
 }
 
-.au-main-btn {
-  background: rgba(8, 20, 14, 0.65);
-  border: 4px solid #ffffff;
-  border-radius: 18px 6px 20px 8px;
-  color: #ffffff;
-  font-size: 1.8rem;
-  font-weight: 900;
-  padding: 20px 10px;
-  width: 100%;
+/* Strips all default HTML button styling so only the image shows */
+.image-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
   cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 8px 0 #000, inset 0 0 15px rgba(255, 255, 255, 0.1);
-  font-family: 'Comic Sans MS', 'Helvetica Neue', sans-serif;
-  backdrop-filter: blur(8px);
+  outline: none;
+  -webkit-tap-highlight-color: transparent; /* Removes blue tap box on mobile */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.1s ease; /* Snappy tap transition */
 }
 
-.play-btn {
-  border-color: #2ecc71;
-  color: #2ecc71;
-  transform: rotate(-1deg);
+/* Makes sure the PNG scales smoothly */
+.image-btn img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  /* Adds a soft floating shadow behind your generated button */
+  filter: drop-shadow(0 10px 10px rgba(0,0,0,0.4)); 
 }
 
-.how-btn {
-  border-color: #3498db;
-  color: #3498db;
-  transform: rotate(1deg);
-}
-
-.au-main-btn:active { 
-  transform: translateY(6px) scale(0.97) rotate(0deg) !important; 
-  box-shadow: 0 2px 0 #000 !important;
+/* The satisfying 3D push-down effect when clicked! */
+.image-btn:active { 
+  transform: translateY(6px) scale(0.96); 
 }
