@@ -13,6 +13,7 @@ const myCards = [puyImg, payImg, peyImg, piyImg, poyImg]
 interface GameScreenProps {
   mode: 'vs-ai' | 'multiplayer'
   roomCode?: string
+  isHost?: boolean
   onQuit: () => void
 }
 
@@ -24,25 +25,24 @@ const CartoonFistSVG = ({ className = '' }: { className?: string }) => (
   </svg>
 )
 
-export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) {
+export default function GameScreen({ mode, roomCode, isHost = false, onQuit }: GameScreenProps) {
   const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(null)
   const [confirmedCardIndex, setConfirmedCardIndex] = useState<number | null>(null)
   const [opponentCardIndex, setOpponentCardIndex] = useState<number | null>(null)
   
   const [score, setScore] = useState({ player: 0, opponent: 0 })
   const [roundResult, setRoundResult] = useState<string | null>(null)
-  
   const [attackState, setAttackState] = useState<'player' | 'opponent' | 'draw' | null>(null)
   
   const [playerRetracting, setPlayerRetracting] = useState(false)
   const [opponentRetracting, setOpponentRetracting] = useState(false)
 
-  const [isPlayer1, setIsPlayer1] = useState<boolean>(true)
-  const [opponentConnected, setOpponentConnected] = useState<boolean>(false)
+  const [isPlayer1, setIsPlayer1] = useState<boolean>(isHost) // Initialize directly based on role!
+  const [opponentConnected, setOpponentConnected] = useState<boolean>(!isHost) // Joiner is connected immediately
   const [dbMatch, setDbMatch] = useState<any>(null)
   const [isResolving, setIsResolving] = useState(false)
+  const [invalidRoom, setInvalidRoom] = useState(false)
 
-  // --- Hold-to-Quit Logic ---
   const [pressProgress, setPressProgress] = useState(0)
   const requestRef = useRef<number>(0)
   const startTimeRef = useRef<number>(0)
@@ -51,7 +51,6 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
   const startPress = () => {
     isPressing.current = true
     startTimeRef.current = Date.now()
-    
     const animate = () => {
       if (!isPressing.current) return
       const elapsed = Date.now() - startTimeRef.current
@@ -80,36 +79,54 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
     }
   }, [])
 
-  // --- Game Sync Logic ---
+  // --- Clean Room Setup & Sync Logic ---
   useEffect(() => {
     if (mode !== 'multiplayer' || !roomCode) return
+
     const setupMatch = async () => {
-      const { data } = await supabase.from('matches').select('*').eq('room_code', roomCode).single()
-      if (!data) {
+      if (isHost) {
+        // HOST LOGIC: Explicitly create the room and wait
         setIsPlayer1(true)
-        const newMatch = { room_code: roomCode, status: 'waiting' }
-        await supabase.from('matches').insert([newMatch])
+        setOpponentConnected(false)
+        
+        const newMatch = { room_code: roomCode, status: 'waiting', player1_move: null, player2_move: null }
+        // Use upsert so it overwrites safely if a ghost record lingered
+        await supabase.from('matches').upsert([newMatch], { onConflict: 'room_code' })
         setDbMatch(newMatch)
       } else {
+        // JOINER LOGIC: Verify the room exists first
+        const { data } = await supabase.from('matches').select('*').eq('room_code', roomCode).single()
+        
+        if (!data) {
+          setInvalidRoom(true)
+          return
+        }
+
         setIsPlayer1(false)
         setOpponentConnected(true)
+        
+        // Update room status to playing so the host's screen unlocks
         await supabase.from('matches').update({ status: 'playing' }).eq('room_code', roomCode)
         const { data: updatedData } = await supabase.from('matches').select('*').eq('room_code', roomCode).single()
         setDbMatch(updatedData)
       }
     }
+
     setupMatch()
 
+    // Listen for changes in this specific room
     const channel = supabase.channel(`room_${roomCode}`)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'matches', filter: `room_code=eq.${roomCode}` },
         (payload: any) => {
           setDbMatch(payload.new)
-          if (payload.new.status === 'playing') setOpponentConnected(true)
+          if (payload.new.status === 'playing') {
+            setOpponentConnected(true)
+          }
         }
       ).subscribe()
 
     return () => { supabase.removeChannel(channel) }
-  }, [mode, roomCode])
+  }, [mode, roomCode, isHost])
 
   useEffect(() => {
     if (!dbMatch || mode !== 'multiplayer') return
@@ -186,11 +203,11 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
   }
 
   const handleArenaClick = () => {
-    // Only allow placing a card if the previous round has completely cleared
     if (selectedCardIndex !== null && confirmedCardIndex === null && roundResult === null) {
       playCard(selectedCardIndex)
     }
   }
+
   const handleTakeBack = async () => {
     if (roundResult === null || playerRetracting || confirmedCardIndex === null) return
     setPlayerRetracting(true)
@@ -214,124 +231,135 @@ export default function GameScreen({ mode, roomCode, onQuit }: GameScreenProps) 
     }, 600) 
   }
 
+  const isWaiting = mode === 'multiplayer' && !opponentConnected && !invalidRoom;
+
   return (
     <div className="game-container pov-mode">
       
-      {/* NEW: Hold-to-Quit Ghost Home Button */}
-      <div 
-        className="glass-home-btn"
-        onMouseDown={startPress}
-        onMouseUp={stopPress}
-        onMouseLeave={stopPress}
-        onTouchStart={startPress}
-        onTouchEnd={stopPress}
-      >
-        <svg className="progress-ring" viewBox="0 0 50 50">
-          <circle
-            cx="25"
-            cy="25"
-            r="23"
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.9)"
-            strokeWidth="2"
-            strokeDasharray="144.51" /* Circumference of r=23 circle */
-            strokeDashoffset={144.51 - (144.51 * pressProgress)}
-            strokeLinecap="round"
-          />
-        </svg>
-        <svg className="home-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-          <polyline points="9 22 9 12 15 12 15 22" />
-        </svg>
-      </div>
-
-      {/* Minimalist Side Scoreboard */}
-      <div className="glass-score">
-        <span>{score.opponent}</span>
-        <span className="score-dash">-</span>
-        <span>{score.player}</span>
-      </div>
-
-      {/* Opponent's Hand POV */}
-      <div className="opponent-hand-area">
-        <CartoonFistSVG className={`
-          ${opponentCardIndex !== null && roundResult === null && attackState === null ? 'fist-shove' : ''}
-          ${opponentRetracting ? 'fist-grab' : ''}
-        `} />
-        {[0, 1, 2, 3, 4].map((i) => (
-          <div key={i} className={`card card-back-design card-pos-${i} ${opponentCardIndex !== null ? 'card-hidden' : ''}`}>
-             <div className="card-pattern"></div>
+      {invalidRoom && (
+        <div className="waiting-screen-overlay">
+          <div className="modern-waiting-card">
+            <h2 style={{ color: '#ff7675' }}>ROOM NOT FOUND</h2>
+            <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '20px', fontSize: '0.9rem' }}>
+              Check the code and try again.
+            </p>
+            <button className="error-return-btn" onClick={onQuit}>
+              RETURN
+            </button>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
 
-      {/* The Central Arena */}
-      <div className="arena-layer" onClick={handleArenaClick}>
+      {isWaiting && (
+        <div className="waiting-screen-overlay">
+          <button className="modern-back-btn fixed-top-left" onClick={onQuit} aria-label="Back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
+          </button>
+          
+          <div className="modern-waiting-card">
+            <div className="slow-loader-ring"></div>
+            <h2>WAITING FOR OPPONENT</h2>
+            <div className="code-pill">{roomCode}</div>
+          </div>
+        </div>
+      )}
+
+      <div className={`game-board-wrapper ${isWaiting || invalidRoom ? 'blurred-game' : ''}`}>
         
-        {/* Opponent's Played Card */}
-        {opponentCardIndex !== null && (
-          <div className={`opponent-played-wrapper 
-            ${attackState === 'opponent' && !opponentRetracting ? 'grow-win' : ''} 
-            ${attackState === 'player' && !opponentRetracting ? 'shrink-lose' : ''}
-            ${attackState === 'draw' && !opponentRetracting ? 'clash-shake' : ''}
-            ${opponentRetracting ? 'card-retract-opponent' : ''}
-          `}>
-             <div className="flipper">
-                <div className="card face front card-back-design"></div>
-                <div className="card face back">
-                  <img src={myCards[opponentCardIndex]} alt="Opponent Card" style={{ transform: 'rotate(180deg)' }} />
-                  {attackState === 'player' && <div className="defeated-overlay"></div>}
-                </div>
-             </div>
+        {!(isWaiting || invalidRoom) && (
+          <div 
+            className="glass-home-btn"
+            onMouseDown={startPress}
+            onMouseUp={stopPress}
+            onMouseLeave={stopPress}
+            onTouchStart={startPress}
+            onTouchEnd={stopPress}
+          >
+            <svg className="progress-ring" viewBox="0 0 50 50">
+              <circle cx="25" cy="25" r="23" fill="none" stroke="rgba(255, 255, 255, 0.9)" strokeWidth="2"
+                strokeDasharray="144.51" strokeDashoffset={144.51 - (144.51 * pressProgress)} strokeLinecap="round" />
+            </svg>
+            <svg className="home-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
           </div>
         )}
 
-        {/* Center UI */}
-        <div className="center-ui">
-           {mode === 'multiplayer' && !opponentConnected && (
-             <div className="waiting-text">Waiting for opponent... ({roomCode})</div>
-           )}
+        <div className="glass-score">
+          <span>{score.opponent}</span>
+          <span className="score-dash">-</span>
+          <span>{score.player}</span>
         </div>
 
-        {/* Player's Played Card */}
-        {confirmedCardIndex !== null && (
-          <div 
-            className={`card player-played-card 
-              ${attackState === 'player' && !playerRetracting ? 'grow-win' : ''} 
-              ${attackState === 'opponent' && !playerRetracting ? 'shrink-lose' : ''}
-              ${attackState === 'draw' && !playerRetracting ? 'clash-shake' : ''}
-              ${playerRetracting ? 'card-retract-player' : ''}
-              ${roundResult !== null && !playerRetracting ? 'clickable-card' : ''}
-            `}
-            onClick={(e) => {
-               e.stopPropagation();
-               handleTakeBack();
-            }}
-          >
-            <img src={myCards[confirmedCardIndex]} alt="Your Card" />
-            {attackState === 'opponent' && <div className="defeated-overlay"></div>}
-          </div>
-        )}
-      </div>
-
-      {/* Player's Hand POV */}
-      <div className="player-hand-area">
-        <CartoonFistSVG className={`
-          ${confirmedCardIndex !== null && roundResult === null && attackState === null ? 'fist-shove' : ''}
-          ${playerRetracting ? 'fist-grab' : ''}
-        `} />
-        {myCards.map((src, index) => {
-          if (confirmedCardIndex === index) return <div key={index} className={`card-slot card-pos-${index}`} />
-          return (
-            <div
-              key={index}
-              className={`card hand-card card-pos-${index} ${selectedCardIndex === index ? 'selected' : ''} ${confirmedCardIndex !== null ? 'card-hidden' : ''}`}
-              onClick={() => setSelectedCardIndex(index)}
-            >
-              <img src={src} alt="Card" draggable="false" /> 
+        <div className="opponent-hand-area">
+          <CartoonFistSVG className={`
+            ${opponentCardIndex !== null && roundResult === null && attackState === null ? 'fist-shove' : ''}
+            ${opponentRetracting ? 'fist-grab' : ''}
+          `} />
+          {[0, 1, 2, 3, 4].map((i) => (
+            <div key={i} className={`card card-back-design card-pos-${i} ${opponentCardIndex !== null ? 'card-hidden' : ''}`}>
+               <div className="card-pattern"></div>
             </div>
-          )
-        })}
+          ))}
+        </div>
+
+        <div className="arena-layer" onClick={handleArenaClick}>
+          {opponentCardIndex !== null && (
+            <div className={`opponent-played-wrapper 
+              ${attackState === 'opponent' && !opponentRetracting ? 'grow-win' : ''} 
+              ${attackState === 'player' && !opponentRetracting ? 'shrink-lose' : ''}
+              ${attackState === 'draw' && !opponentRetracting ? 'clash-shake' : ''}
+              ${opponentRetracting ? 'card-retract-opponent' : ''}
+            `}>
+               <div className="flipper">
+                  <div className="card face front card-back-design"></div>
+                  <div className="card face back">
+                    <img src={myCards[opponentCardIndex]} alt="Opponent Card" style={{ transform: 'rotate(180deg)' }} />
+                    {attackState === 'player' && <div className="defeated-overlay"></div>}
+                  </div>
+               </div>
+            </div>
+          )}
+
+          {confirmedCardIndex !== null && (
+            <div 
+              className={`card player-played-card 
+                ${attackState === 'player' && !playerRetracting ? 'grow-win' : ''} 
+                ${attackState === 'opponent' && !playerRetracting ? 'shrink-lose' : ''}
+                ${attackState === 'draw' && !playerRetracting ? 'clash-shake' : ''}
+                ${playerRetracting ? 'card-retract-player' : ''}
+                ${roundResult !== null && !playerRetracting ? 'clickable-card' : ''}
+              `}
+              onClick={(e) => {
+                 e.stopPropagation();
+                 handleTakeBack();
+              }}
+            >
+              <img src={myCards[confirmedCardIndex]} alt="Your Card" />
+              {attackState === 'opponent' && <div className="defeated-overlay"></div>}
+            </div>
+          )}
+        </div>
+
+        <div className="player-hand-area">
+          <CartoonFistSVG className={`
+            ${confirmedCardIndex !== null && roundResult === null && attackState === null ? 'fist-shove' : ''}
+            ${playerRetracting ? 'fist-grab' : ''}
+          `} />
+          {myCards.map((src, index) => {
+            if (confirmedCardIndex === index) return <div key={index} className={`card-slot card-pos-${index}`} />
+            return (
+              <div key={index} className={`card hand-card card-pos-${index} ${selectedCardIndex === index ? 'selected' : ''} ${confirmedCardIndex !== null ? 'card-hidden' : ''}`}
+                onClick={() => setSelectedCardIndex(index)}>
+                <img src={src} alt="Card" draggable="false" /> 
+              </div>
+            )
+          })}
+        </div>
       </div>
 
     </div>

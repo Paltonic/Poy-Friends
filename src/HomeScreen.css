@@ -3,7 +3,7 @@
 .home-container { 
   display: flex; 
   flex-direction: column; 
-  justify-content: space-around; 
+  justify-content: center; /* Changed to center for precise control */
   align-items: center; 
   height: 100dvh; 
   max-width: 450px; 
@@ -17,7 +17,8 @@
 /* --- Scaled Image Logo --- */
 .title-wrapper {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 60px; /* Pushed lower down on the screen */
+  margin-bottom: 50px; /* Space between logo and buttons */
   width: 100%;
   display: flex;
   justify-content: center;
@@ -32,41 +33,55 @@
   filter: drop-shadow(0 15px 15px rgba(0,0,0,0.5));
 }
 
-/* --- Image Button Menu --- */
+/* --- Modern Glass Menu --- */
 .main-menu { 
   display: flex; 
   flex-direction: column; 
-  gap: 15px; /* Shrunk the gap slightly to fit the smaller buttons */
+  gap: 16px; 
   width: 100%; 
-  max-width: 180px; /* <--- THIS IS THE MAGIC NUMBER! Lower this to make them smaller */
-  margin-bottom: 30px;
+  max-width: 200px; /* SHORTER IN LENGTH (was 260px) */
+  margin-bottom: 40px;
   z-index: 10; 
 }
 
-/* Strips all default HTML button styling so only the image shows */
-.image-btn {
-  background: transparent;
-  border: none;
-  padding: 0;
+.modern-menu-btn {
+  background: rgba(20, 30, 25, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  /* ROUNDER CORNERS (Pill shape) */
+  border-radius: 20px; 
+  
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  padding: 14px 24px;
+  width: 100%;
   cursor: pointer;
-  outline: none;
-  -webkit-tap-highlight-color: transparent; /* Removes blue tap box on mobile */
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 0.1s ease; /* Snappy tap transition */
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+  letter-spacing: 2px;
 }
 
-/* Makes sure the PNG scales smoothly */
-.image-btn img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  /* Adds a soft floating shadow behind your generated button */
-  filter: drop-shadow(0 10px 10px rgba(0,0,0,0.4)); 
+.modern-menu-btn:active {
+  transform: scale(0.95);
+  background: rgba(30, 40, 35, 0.85);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* The satisfying 3D push-down effect when clicked! */
-.image-btn:active { 
-  transform: translateY(6px) scale(0.96); 
+/* --- Accents & Glows (Matching PlayScreen) --- */
+.play-btn {
+  color: #55efc4;
+  text-shadow: 0 0 15px rgba(85, 239, 196, 0.4);
+  border-bottom: 2px solid rgba(85, 239, 196, 0.3);
+}
+
+.about-btn {
+  color: #74b9ff;
+  text-shadow: 0 0 15px rgba(116, 185, 255, 0.4);
+  border-bottom: 2px solid rgba(116, 185, 255, 0.3);
 }

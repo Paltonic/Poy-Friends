@@ -13,30 +13,32 @@
   position: relative;
 }
 
-/* --- Wooden Circular Back Button --- */
-.glass-back-btn {
+/* --- Modern Glass Back Button --- */
+.modern-back-btn {
   position: absolute;
   top: 25px;
   left: 20px;
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: linear-gradient(180deg, #9C6A41 0%, #704728 100%);
-  border: 3px solid #4A2E15;
-  color: #FFF8DC;
+  background: rgba(30, 40, 35, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  box-shadow: 0 6px 0 #4A2E15;
-  transition: all 0.1s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 20;
 }
 
-.glass-back-btn svg { width: 22px; height: 22px; filter: drop-shadow(0px 2px 0px #3E2723); }
-.glass-back-btn:active {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 #4A2E15;
+.modern-back-btn:active {
+  transform: scale(0.9);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* --- Asymmetric Layout Grid --- */
@@ -50,96 +52,76 @@
   margin-top: 40px;
 }
 
-/* Base Wooden Card Style */
-.jagged-card {
-  background: linear-gradient(180deg, #9C6A41 0%, #704728 100%);
-  border: 4px solid #4A2E15;
-  border-radius: 16px;
+/* --- Modern Glass Card Style --- */
+.modern-card {
+  background: rgba(20, 30, 25, 0.7); /* Deep tinted glass */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px; /* Smooth squircles */
   cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   position: relative;
-  transition: all 0.1s ease;
-  font-family: 'Comic Sans MS', 'Helvetica Neue', sans-serif;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
   user-select: none;
-  box-shadow: 0 8px 0 #4A2E15, 0 15px 15px rgba(0,0,0,0.3);
-  color: #FFF8DC;
-  text-shadow: 0px 2px 0px #3E2723;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
 }
 
-.jagged-card:active {
-  transform: translateY(6px) !important;
-  box-shadow: 0 2px 0 #4A2E15 !important;
+.modern-card:active {
+  transform: scale(0.95);
+  background: rgba(30, 40, 35, 0.85);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* CSS Leaves for Cards */
-.jagged-card::before {
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: -8px;
-  width: 20px;
-  height: 20px;
-  background: #7CB342;
-  border-radius: 0 80% 0 80%;
-  transform: rotate(20deg);
-  border: 2px solid #33691E;
-  z-index: 5;
+.card-icon { 
+  width: 45px; 
+  height: 45px; 
+  margin-bottom: 12px; 
 }
 
-/* Slightly different colors for visual hierarchy */
-.create-card { color: #81ecec; }
-.join-card { color: #fab1a0; }
-
-.card-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 0.65rem;
-  font-weight: 900;
-  padding: 4px 8px;
-  background: #4A2E15;
-  color: #FFF8DC;
-  border-radius: 8px;
-  letter-spacing: 1px;
+.card-label { 
+  font-size: 1.1rem; 
+  font-weight: 700; 
+  letter-spacing: 1.5px; 
+  text-transform: uppercase; 
 }
 
-.card-icon { width: 38px; height: 38px; margin-bottom: 8px; filter: drop-shadow(0px 2px 0px #3E2723); }
-.card-label { font-size: 1.1rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+/* --- Accents & Glows --- */
+.create-card { color: #55efc4; } /* Mint Green */
+.create-card .card-icon { 
+  stroke: #55efc4; 
+  filter: drop-shadow(0 0 12px rgba(85,239,196,0.6)); 
+}
 
-/* Horizontal VS AI Card */
+.join-card { color: #74b9ff; } /* Soft Blue */
+.join-card .card-icon { 
+  stroke: #74b9ff; 
+  filter: drop-shadow(0 0 12px rgba(116,185,255,0.6)); 
+}
+
+/* --- Horizontal VS AI Card --- */
 .ai-card-horizontal {
   grid-column: span 2;
   flex-direction: row;
   justify-content: flex-start;
   padding: 20px 24px;
   gap: 20px;
-  color: #ffeaa7;
+  color: #fdcb6e; /* Soft Yellow/Orange */
+}
+
+.ai-card-horizontal .card-icon { 
+  stroke: #fdcb6e; 
+  filter: drop-shadow(0 0 12px rgba(253,203,110,0.6)); 
+  margin-bottom: 0;
 }
 
 .ai-icon-wrapper {
-  position: relative;
   display: flex;
   align-items: center;
-}
-
-.ai-icon { width: 42px; height: 42px; }
-
-.zzz-text {
-  position: absolute;
-  top: -12px;
-  right: -14px;
-  font-size: 0.8rem;
-  font-weight: 900;
-  color: #55efc4;
-  animation: floatZzz 2s infinite ease-in-out;
-}
-
-@keyframes floatZzz {
-  0%, 100% { transform: translate(0, 0) scale(0.9); opacity: 0.5; }
-  50% { transform: translate(4px, -6px) scale(1.1); opacity: 1; }
 }
 
 .ai-text-content {
@@ -150,106 +132,161 @@
 
 .card-label-large {
   font-size: 1.6rem;
-  font-weight: 900;
+  font-weight: 800;
   line-height: 1;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
 }
 
 .ai-subtext {
-  font-size: 0.75rem;
-  color: #FFF8DC;
-  opacity: 0.8;
-  font-weight: 800;
-  margin-top: 4px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 6px;
   letter-spacing: 1px;
+  font-weight: 500;
 }
 
-/* --- Wooden Modals --- */
+/* --- Modern Glass Modals --- */
 .modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px); 
+  -webkit-backdrop-filter: blur(12px);
   display: flex; justify-content: center; align-items: center;
-  z-index: 100; backdrop-filter: blur(4px);
+  z-index: 100;
+  animation: fadeIn 0.2s ease-out;
 }
 
-.jagged-modal {
-  background: linear-gradient(180deg, #9C6A41 0%, #704728 100%);
-  padding: 30px 20px;
-  border-radius: 20px;
+@keyframes fadeIn { 
+  from { opacity: 0; } 
+  to { opacity: 1; } 
+}
+
+.modern-modal {
+  background: rgba(30, 40, 35, 0.75);
+  padding: 35px 25px;
+  border-radius: 28px;
   width: 85%;
   max-width: 320px;
   text-align: center;
-  box-shadow: 0 10px 0 #4A2E15, 0 20px 30px rgba(0,0,0,0.5);
-  border: 4px solid #4A2E15;
-  color: #FFF8DC;
-  font-family: 'Comic Sans MS', sans-serif;
-  text-shadow: 0px 2px 0px #3E2723;
-  position: relative;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Vines on the modal! */
-.jagged-modal::before {
-  content: '';
-  position: absolute;
-  top: -15px;
-  right: -10px;
-  width: 30px;
-  height: 30px;
-  background: #7CB342;
-  border-radius: 0 80% 0 80%;
-  transform: rotate(60deg);
-  border: 3px solid #33691E;
+@keyframes slideUp { 
+  from { transform: translateY(20px) scale(0.95); opacity: 0; } 
+  to { transform: translateY(0) scale(1); opacity: 1; } 
+}
+
+.modern-modal h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 0 0 15px 0;
+  color: #ffffff;
+  opacity: 0.9;
+}
+
+.modern-modal p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 20px;
 }
 
 .code-display {
   font-size: 3.5rem;
   font-weight: 900;
-  letter-spacing: 6px;
+  letter-spacing: 8px;
   color: #55efc4;
   margin: 15px 0;
+  text-shadow: 0 0 20px rgba(85, 239, 196, 0.4); 
 }
 
 .code-input {
   width: 100%;
-  font-size: 2.2rem;
+  font-size: 2.5rem;
   text-align: center;
-  letter-spacing: 6px;
-  padding: 12px;
-  border-radius: 12px;
-  border: 3px solid #4A2E15;
-  background-color: #f1f2f6;
-  color: #2c3e50;
+  letter-spacing: 8px;
+  padding: 16px;
+  border-radius: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #ffffff;
   font-weight: bold;
   box-sizing: border-box;
-  margin: 15px 0;
-  text-shadow: none;
+  margin: 15px 0 25px 0;
+  transition: all 0.2s ease;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
-.au-modal-btn {
-  background: #2ecc71;
-  color: #ffffff;
-  font-size: 1.3rem;
-  font-weight: 900;
-  padding: 14px;
+/* --- Remove Number Input Incrementors (Spin Buttons) --- */
+.code-input::-webkit-outer-spin-button,
+.code-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Fix for Firefox */
+.code-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.code-input:focus {
+  outline: none;
+  border-color: #55efc4;
+  box-shadow: 0 0 15px rgba(85, 239, 196, 0.3);
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.code-input::placeholder {
+  color: rgba(255, 255, 255, 0.15);
+}
+
+/* Modern Pill Buttons */
+.modern-modal-btn {
+  background: linear-gradient(135deg, #00b894, #55efc4);
+  color: #0d1a12;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  padding: 16px;
   width: 100%;
-  border: 3px solid #4A2E15;
-  border-radius: 12px;
+  border: none;
+  border-radius: 16px;
   cursor: pointer;
-  box-shadow: 0 6px 0 #145c32;
-  margin-top: 10px;
-  transition: all 0.1s ease;
-  text-shadow: 0px 2px 0px #145c32;
+  box-shadow: 0 8px 20px rgba(0, 184, 148, 0.3);
+  margin-top: 5px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  letter-spacing: 1px;
 }
 
-.au-modal-btn:active:not(:disabled) {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 #145c32;
+.modern-modal-btn:active:not(:disabled) {
+  transform: scale(0.95);
+  box-shadow: 0 4px 10px rgba(0, 184, 148, 0.2);
 }
 
-.au-modal-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.modern-modal-btn:disabled { 
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+  cursor: not-allowed;
+}
 
-.text-btn {
-  background: none; border: none; color: #FFF8DC;
-  font-size: 0.9rem; padding: 10px; cursor: pointer;
-  text-decoration: underline; margin-top: 8px; font-weight: bold;
+.modern-text-btn {
+  background: none; 
+  border: none; 
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.95rem; 
+  padding: 12px; 
+  cursor: pointer;
+  margin-top: 12px; 
+  font-weight: 600;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  transition: color 0.2s;
+}
+
+.modern-text-btn:hover {
+  color: #ffffff;
 }
