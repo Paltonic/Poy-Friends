@@ -1,9 +1,13 @@
 /* src/HomeScreen.css */
 
 .home-container { 
+  background-image: url('./assets/bgimage.jpeg');
+  background-size: cover;      
+  background-position: center; 
+  background-repeat: no-repeat; 
   display: flex; 
   flex-direction: column; 
-  justify-content: center; /* Changed to center for precise control */
+  justify-content: center; 
   align-items: center; 
   height: 100dvh; 
   max-width: 450px; 
@@ -17,8 +21,8 @@
 /* --- Scaled Image Logo --- */
 .title-wrapper {
   text-align: center;
-  margin-top: 60px; /* Pushed lower down on the screen */
-  margin-bottom: 50px; /* Space between logo and buttons */
+  margin-top: 20px; 
+  margin-bottom: 30px; 
   width: 100%;
   display: flex;
   justify-content: center;
@@ -26,64 +30,10 @@
 
 .game-logo-img {
   width: 100%;
-  max-width: 320px; 
+  max-width: 280px; /* Sedikit dikecilkan agar proporsional dengan tombol */
   height: auto;
   object-fit: contain;
-  border-radius: 20px; 
   filter: drop-shadow(0 15px 15px rgba(0,0,0,0.5));
-}
-
-/* --- Modern Glass Menu --- */
-.main-menu { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 16px; 
-  width: 100%; 
-  max-width: 200px; /* SHORTER IN LENGTH (was 260px) */
-  margin-bottom: 40px;
-  z-index: 10; 
-}
-
-.modern-menu-btn {
-  background: rgba(20, 30, 25, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  
-  /* ROUNDER CORNERS (Pill shape) */
-  border-radius: 20px; 
-  
-  font-family: 'Inter', 'Segoe UI', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 800;
-  padding: 14px 24px;
-  width: 100%;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-  letter-spacing: 2px;
-}
-
-.modern-menu-btn:active {
-  transform: scale(0.95);
-  background: rgba(30, 40, 35, 0.85);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-/* --- Accents & Glows (Matching PlayScreen) --- */
-.play-btn {
-  color: #55efc4;
-  text-shadow: 0 0 15px rgba(85, 239, 196, 0.4);
-  border-bottom: 2px solid rgba(85, 239, 196, 0.3);
-}
-
-.about-btn {
-  color: #74b9ff;
-  text-shadow: 0 0 15px rgba(116, 185, 255, 0.4);
-  border-bottom: 2px solid rgba(116, 185, 255, 0.3);
 }
 
 /* --- Home Level Display --- */
@@ -91,7 +41,7 @@
   display: flex;
   align-items: baseline;
   gap: 6px;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
   padding: 8px 20px;
   background: rgba(20, 30, 25, 0.6);
   backdrop-filter: blur(12px);
@@ -121,4 +71,59 @@
   font-size: 0.9rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.35);
+}
+
+/* --- Modern Glass Menu --- */
+.main-menu { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 18px; /* Jarak antar tombol */
+  width: 100%; 
+  max-width: 260px; /* Lebar tombol disesuaikan agar mirip gambar kiri */
+  margin-bottom: 40px;
+  z-index: 10; 
+}
+
+.modern-menu-btn {
+  /* Background Kaca Gelap */
+  background: rgba(20, 30, 25, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  /* Border tipis transparan menyeluruh (bukan hanya bawah) */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  /* Sudut membulat sempurna (Pill shape) */
+  border-radius: 50px; 
+  
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-size: 1.3rem; /* Teks lebih besar dan tebal */
+  font-weight: 900;
+  padding: 18px 24px; /* Padding lebih tebal agar tombol terlihat kokoh */
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.modern-menu-btn:active {
+  transform: scale(0.95);
+  background: rgba(30, 40, 35, 0.9);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* --- Warna Teks & Glow --- */
+.play-btn {
+  color: #55efc4; /* Hijau Neon */
+  text-shadow: 0 0 15px rgba(85, 239, 196, 0.5);
+}
+
+.about-btn {
+  color: #74b9ff; /* Biru Terang */
+  text-shadow: 0 0 15px rgba(116, 185, 255, 0.5);
 }

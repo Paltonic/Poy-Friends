@@ -1,0 +1,73 @@
+/* src/AboutScreen.css */
+
+.about-container {
+  /* Samakan background dan layout dengan PlayScreen */
+  background-image: url('./assets/bgimage.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  /* Layout Mobile-App Style (sama seperti PlayScreen) */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100dvh;
+  max-width: 450px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative;
+  
+  /* Font dan warna dasar */
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  color: #ffffff;
+  text-align: center;
+}
+
+/* Panel Kaca (Glass Panel) untuk membungkus konten */
+.about-glass-panel {
+  position: relative;
+  z-index: 1;
+  background: rgba(20, 30, 25, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 40px 25px;
+  width: 100%;
+  max-width: 340px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Styling Judul */
+.about-glass-panel h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin: 0 0 15px 0;
+  color: #55efc4; /* Hijau neon khas PlayScreen */
+  text-transform: uppercase;
+  text-shadow: 0 0 15px rgba(85, 239, 196, 0.4);
+}
+
+/* Styling Paragraf */
+.about-glass-panel p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 30px;
+}
+
+.modern-menu-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 4px 10px rgba(0, 184, 148, 0.2);
+}
+
+.about-btn {
+  color: #e70f62; /* Pink Muda */
+  text-shadow: 0 0 15px rgba(85, 239, 196, 0.5);
+}

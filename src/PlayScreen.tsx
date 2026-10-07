@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import './PlayScreen.css'
-import { getLevel } from './utils/levelSystem'
+import { getLevel } from './utils/levelSytem'
+// PENTING: Sesuaikan path import ini dengan lokasi file supabase client milikmu
+// Contoh: import { supabase } from '../lib/supabaseClient'
+import { supabase } from './supabaseClient' 
 
 interface PlayScreenProps {
   onBack: () => void
@@ -12,29 +15,75 @@ export default function PlayScreen({ onBack, onStartGame }: PlayScreenProps) {
   const [showJoinModal, setShowJoinModal] = useState(false)
   const [generatedCode, setGeneratedCode] = useState('')
   const [joinCode, setJoinCode] = useState('')
+  
+  // State tambahan untuk menangani proses ke Supabase
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   const currentLevel = getLevel()
 
+  // 1. Buka modal Create dan generate kode acak
   const handleCreateRoom = () => {
     const code = Math.floor(1000 + Math.random() * 9000).toString()
     setGeneratedCode(code)
+    setErrorMessage('')
     setShowCreateModal(true)
   }
 
-  const handleConfirmCreate = () => {
-    setShowCreateModal(false)
-    onStartGame('multiplayer', generatedCode, true)
+  // 2. Konfirmasi Create: Simpan kode ke Supabase
+  const handleConfirmCreate = async () => {
+    setIsLoading(true)
+    setErrorMessage('')
+
+    // Simpan ke tabel 'rooms'
+    const { error } = await supabase
+      .from('rooms')
+      .insert([{ code: generatedCode }])
+
+    setIsLoading(false)
+
+    if (error) {
+      console.error('Error creating room:', error)
+      setErrorMessage('Gagal membuat room. Cek koneksi atau coba lagi.')
+    } else {
+      setShowCreateModal(false)
+      onStartGame('multiplayer', generatedCode, true)
+    }
   }
 
+  // 3. Buka modal Join
   const handleJoinRoom = () => {
     setJoinCode('')
+    setErrorMessage('')
     setShowJoinModal(true)
   }
 
-  const handleConfirmJoin = () => {
+  // 4. Konfirmasi Join: Cek apakah kode ada di Supabase
+  const handleConfirmJoin = async () => {
     if (joinCode.length === 4) {
-      setShowJoinModal(false)
-      onStartGame('multiplayer', joinCode, false)
+      setIsLoading(true)
+      setErrorMessage('')
+
+      // Cek kode di tabel 'rooms'
+      const { data, error } = await supabase
+        .from('rooms')
+        .select('code')
+        .eq('code', joinCode)
+        .maybeSingle() // Gunakan maybeSingle agar tidak error jika data kosong
+
+      setIsLoading(false)
+
+      if (error) {
+        console.error('Error joining room:', error)
+        setErrorMessage('Terjadi kesalahan. Coba lagi.')
+      } else if (!data) {
+        // Jika data tidak ditemukan (tabel kosong / kode salah)
+        setErrorMessage('ROOM NOT FOUND. Check the code and try again.')
+      } else {
+        // Jika ketemu
+        setShowJoinModal(false)
+        onStartGame('multiplayer', joinCode, false)
+      }
     }
   }
 
@@ -67,7 +116,7 @@ export default function PlayScreen({ onBack, onStartGame }: PlayScreenProps) {
           <span className="card-label">Join</span>
         </div>
 
-        {/* VS AI — with LEVEL display */}
+        {/* VS AI */}
         <div className="modern-card ai-card-horizontal" onClick={() => onStartGame('vs-ai')}>
           <div className="ai-icon-wrapper">
             <svg className="card-icon" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -87,15 +136,31 @@ export default function PlayScreen({ onBack, onStartGame }: PlayScreenProps) {
 
       {/* CREATE ROOM MODAL */}
       {showCreateModal && (
-        <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
+        <div className="modal-overlay" onClick={() => !isLoading && setShowCreateModal(false)}>
           <div className="modern-modal" onClick={(e) => e.stopPropagation()}>
             <h2>ROOM CODE</h2>
             <p>Share this code with your friend</p>
             <div className="code-display">{generatedCode}</div>
-            <button className="modern-modal-btn" onClick={handleConfirmCreate}>
-              START
+            
+            {errorMessage && (
+              <p style={{ color: '#ff4d4d', fontSize: '0.85rem', marginTop: '10px', fontWeight: 'bold' }}>
+                {errorMessage}
+              </p>
+            )}
+            
+            <button 
+              className="modern-modal-btn" 
+              onClick={handleConfirmCreate} 
+              disabled={isLoading}
+              style={{ opacity: isLoading ? 0.7 : 1 }}
+            >
+              {isLoading ? 'CREATING...' : 'START'}
             </button>
-            <button className="modern-text-btn" onClick={() => setShowCreateModal(false)}>
+            <button 
+              className="modern-text-btn" 
+              onClick={() => setShowCreateModal(false)} 
+              disabled={isLoading}
+            >
               CANCEL
             </button>
           </div>
@@ -104,7 +169,7 @@ export default function PlayScreen({ onBack, onStartGame }: PlayScreenProps) {
 
       {/* JOIN ROOM MODAL */}
       {showJoinModal && (
-        <div className="modal-overlay" onClick={() => setShowJoinModal(false)}>
+        <div className="modal-overlay" onClick={() => !isLoading && setShowJoinModal(false)}>
           <div className="modern-modal" onClick={(e) => e.stopPropagation()}>
             <h2>ENTER CODE</h2>
             <p>Ask your friend for the room code</p>
@@ -116,15 +181,28 @@ export default function PlayScreen({ onBack, onStartGame }: PlayScreenProps) {
               value={joinCode}
               onChange={(e) => setJoinCode(e.target.value.slice(0, 4))}
               autoFocus
+              disabled={isLoading}
             />
+            
+            {errorMessage && (
+              <p style={{ color: '#ff4d4d', fontSize: '0.85rem', marginTop: '10px', fontWeight: 'bold' }}>
+                {errorMessage}
+              </p>
+            )}
+
             <button
               className="modern-modal-btn"
-              disabled={joinCode.length !== 4}
+              disabled={joinCode.length !== 4 || isLoading}
               onClick={handleConfirmJoin}
+              style={{ opacity: (joinCode.length !== 4 || isLoading) ? 0.7 : 1 }}
             >
-              JOIN
+              {isLoading ? 'CHECKING...' : 'JOIN'}
             </button>
-            <button className="modern-text-btn" onClick={() => setShowJoinModal(false)}>
+            <button 
+              className="modern-text-btn" 
+              onClick={() => setShowJoinModal(false)} 
+              disabled={isLoading}
+            >
               CANCEL
             </button>
           </div>

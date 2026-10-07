@@ -1,6 +1,10 @@
 /* src/PlayScreen.css */
 
 .play-screen-container {
+  background-image: url('./assets/bgimage.jpeg');
+  background-size: cover;      
+  background-position: center; 
+  background-repeat: no-repeat; 
   display: flex;
   flex-direction: column;
   justify-content: center;
