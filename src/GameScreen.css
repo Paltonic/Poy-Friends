@@ -412,3 +412,48 @@
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.3);
 }
+
+/* --- Level Badge --- */
+.level-badge {
+  position: absolute;
+  top: 18px;
+  right: 15px;
+  background: rgba(20, 30, 25, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(85, 239, 196, 0.3);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #55efc4;
+  text-shadow: 0 0 10px rgba(85, 239, 196, 0.4);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  z-index: 30;
+  pointer-events: none;
+}
+
+/* --- Level Up Toast --- */
+.level-up-toast {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #55efc4;
+  text-shadow: 0 0 30px rgba(85, 239, 196, 0.8);
+  z-index: 200;
+  pointer-events: none;
+  animation: levelUpToast 1.5s ease-out forwards;
+}
+
+@keyframes levelUpToast {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  30% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+}

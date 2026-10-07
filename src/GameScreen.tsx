@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase } from './supabaseClient'
 import './GameScreen.css'
 
+import { getLevel, increaseLevelOnWin, handleLoss } from './utils/levelSystem'
+
 import puyImg from './assets/PUY.png'
 import payImg from './assets/PAY.png'
 import peyImg from './assets/PEY.png'
@@ -47,6 +49,15 @@ export default function GameScreen({ mode, roomCode, isHost = false, onQuit }: G
   const requestRef = useRef<number>(0)
   const startTimeRef = useRef<number>(0)
   const isPressing = useRef(false)
+
+  // --- LEVEL SYSTEM STATE (only relevant for VS AI) ---
+  const [currentLevel, setCurrentLevel] = useState<number>(getLevel())
+  const [showLevelUp, setShowLevelUp] = useState(false)
+
+  useEffect(() => {
+    // Refresh displayed level when entering the screen
+    setCurrentLevel(getLevel())
+  }, [])
 
   const startPress = () => {
     isPressing.current = true
@@ -190,9 +201,33 @@ export default function GameScreen({ mode, roomCode, isHost = false, onQuit }: G
           else setAttackState('draw')
           
           setTimeout(() => {
-            if (result === 'win') { setRoundResult('WIN!'); setScore(p => ({ ...p, player: p.player + 1 })) } 
-            else if (result === 'lose') { setRoundResult('LOSE!'); setScore(p => ({ ...p, opponent: p.opponent + 1 })) } 
-            else { setRoundResult('DRAW!') }
+            if (result === 'win') {
+              setRoundResult('WIN!')
+              setScore(p => ({ ...p, player: p.player + 1 }))
+
+              // === LEVEL UP LOGIC (VS AI ONLY) ===
+              const prevLevel = getLevel()
+              const newLevel = increaseLevelOnWin()
+              setCurrentLevel(newLevel)
+              if (newLevel > prevLevel) {
+                setShowLevelUp(true)
+                setTimeout(() => setShowLevelUp(false), 1600)
+              }
+              // ====================================
+            } 
+            else if (result === 'lose') {
+              setRoundResult('LOSE!')
+              setScore(p => ({ ...p, opponent: p.opponent + 1 }))
+
+              // === LEVEL STAYS THE SAME ON LOSS (VS AI ONLY) ===
+              const levelNow = handleLoss()
+              setCurrentLevel(levelNow)
+              // ==================================================
+            } 
+            else {
+              setRoundResult('DRAW!')
+              // Draw = no level change
+            }
           }, 800)
         }, 1900)
       }, 500)
@@ -287,6 +322,18 @@ export default function GameScreen({ mode, roomCode, isHost = false, onQuit }: G
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
           </div>
+        )}
+
+        {/* === LEVEL BADGE (only shows during VS AI) === */}
+        {mode === 'vs-ai' && !(isWaiting || invalidRoom) && (
+          <div className="level-badge">
+            LV {currentLevel}
+          </div>
+        )}
+
+        {/* === LEVEL UP TOAST === */}
+        {showLevelUp && (
+          <div className="level-up-toast">LEVEL UP!</div>
         )}
 
         <div className="glass-score">

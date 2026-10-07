@@ -1,38 +1,45 @@
-// src/HomeScreen.tsx
-import { useState } from 'react'
-import PlayScreen from './PlayScreen'
+import { useState, useEffect } from 'react'
 import './HomeScreen.css'
+import { getLevel } from './utils/levelSystem'
 
-import bgImage from './assets/bgimage.jpeg'
-import poyLogo from './assets/poy_logo.png' 
+import logoImg from './assets/logo.png' // ← sesuaikan nama file logo Anda
 
 interface HomeScreenProps {
-  // UPDATED: Added the isHost boolean to pass it up to your main App file
-  onStartGame: (mode: 'vs-ai' | 'multiplayer', code?: string, isHost?: boolean) => void
+  onNavigate: (screen: 'play' | 'about') => void
 }
 
-export default function HomeScreen({ onStartGame }: HomeScreenProps) {
-  const [currentView, setCurrentView] = useState<'main' | 'play'>('main')
+export default function HomeScreen({ onNavigate }: HomeScreenProps) {
+  const [level, setLevel] = useState(getLevel())
 
-  if (currentView === 'play') {
-    return <PlayScreen onStartGame={onStartGame} onBack={() => setCurrentView('main')} />
-  }
+  useEffect(() => {
+    // Refresh setiap kali kembali ke Home
+    setLevel(getLevel())
+  }, [])
 
   return (
-    <div 
-      className="home-container" 
-      style={{ background: `#60a3bc url(${bgImage}) no-repeat center bottom`, backgroundSize: 'cover' }}
-    >
-
+    <div className="home-container">
       <div className="title-wrapper">
-        <img src={poyLogo} alt="POY & FRIENDS" className="game-logo-img" />
+        <img src={logoImg} alt="PoyNFriends" className="game-logo-img" />
+      </div>
+
+      {/* === LEVEL DISPLAY === */}
+      <div className="home-level-display">
+        <span className="home-level-label">LEVEL</span>
+        <span className="home-level-value">{level}</span>
+        <span className="home-level-max">/ 5</span>
       </div>
 
       <div className="main-menu">
-        <button className="modern-menu-btn play-btn" onClick={() => setCurrentView('play')}>
+        <button
+          className="modern-menu-btn play-btn"
+          onClick={() => onNavigate('play')}
+        >
           PLAY
         </button>
-        <button className="modern-menu-btn about-btn" onClick={() => alert('Tutorial coming soon!')}>
+        <button
+          className="modern-menu-btn about-btn"
+          onClick={() => onNavigate('about')}
+        >
           ABOUT
         </button>
       </div>

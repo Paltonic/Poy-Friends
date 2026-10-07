@@ -85,3 +85,40 @@
   text-shadow: 0 0 15px rgba(116, 185, 255, 0.4);
   border-bottom: 2px solid rgba(116, 185, 255, 0.3);
 }
+
+/* --- Home Level Display --- */
+.home-level-display {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 30px;
+  padding: 8px 20px;
+  background: rgba(20, 30, 25, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(85, 239, 196, 0.25);
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.home-level-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.home-level-value {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #55efc4;
+  text-shadow: 0 0 15px rgba(85, 239, 196, 0.5);
+  line-height: 1;
+}
+
+.home-level-max {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+}

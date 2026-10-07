@@ -1,104 +1,132 @@
 import { useState } from 'react'
 import './PlayScreen.css'
-
-import bgImage from './assets/bgimage.jpeg'
+import { getLevel } from './utils/levelSystem'
 
 interface PlayScreenProps {
-  // NEW: Added the isHost boolean to the function signature
-  onStartGame: (mode: 'vs-ai' | 'multiplayer', code?: string, isHost?: boolean) => void
   onBack: () => void
+  onStartGame: (mode: 'vs-ai' | 'multiplayer', roomCode?: string, isHost?: boolean) => void
 }
 
-export default function PlayScreen({ onStartGame, onBack }: PlayScreenProps) {
+export default function PlayScreen({ onBack, onStartGame }: PlayScreenProps) {
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showJoinModal, setShowJoinModal] = useState(false)
-  const [roomCode, setRoomCode] = useState('')
-  const [joinInput, setJoinInput] = useState('')
+  const [generatedCode, setGeneratedCode] = useState('')
+  const [joinCode, setJoinCode] = useState('')
+
+  const currentLevel = getLevel()
 
   const handleCreateRoom = () => {
-    const newCode = Math.floor(1000 + Math.random() * 9000).toString()
-    setRoomCode(newCode)
+    const code = Math.floor(1000 + Math.random() * 9000).toString()
+    setGeneratedCode(code)
     setShowCreateModal(true)
   }
 
+  const handleConfirmCreate = () => {
+    setShowCreateModal(false)
+    onStartGame('multiplayer', generatedCode, true)
+  }
+
+  const handleJoinRoom = () => {
+    setJoinCode('')
+    setShowJoinModal(true)
+  }
+
+  const handleConfirmJoin = () => {
+    if (joinCode.length === 4) {
+      setShowJoinModal(false)
+      onStartGame('multiplayer', joinCode, false)
+    }
+  }
+
   return (
-    <div 
-      className="play-screen-container"
-      style={{ background: `#60a3bc url(${bgImage}) no-repeat center bottom`, backgroundSize: 'cover' }}
-    >
-      <button className="modern-back-btn fixed-top-left" onClick={onBack} aria-label="Back">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <div className="play-screen-container">
+      <button className="modern-back-btn" onClick={onBack} aria-label="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
           <line x1="19" y1="12" x2="5" y2="12" />
           <polyline points="12 19 5 12 12 5" />
         </svg>
       </button>
 
       <div className="play-grid">
+        {/* CREATE ROOM */}
         <div className="modern-card create-card" onClick={handleCreateRoom}>
-          <svg className="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round"/>
+          <svg className="card-icon" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
-          <span className="card-label">CREATE</span>
+          <span className="card-label">Create</span>
         </div>
 
-        <div className="modern-card join-card" onClick={() => setShowJoinModal(true)}>
-          <svg className="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13 12H3" strokeLinecap="round" strokeLinejoin="round"/>
+        {/* JOIN ROOM */}
+        <div className="modern-card join-card" onClick={handleJoinRoom}>
+          <svg className="card-icon" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+            <polyline points="10 17 15 12 10 7" />
+            <line x1="15" y1="12" x2="3" y2="12" />
           </svg>
-          <span className="card-label">JOIN</span>
+          <span className="card-label">Join</span>
         </div>
 
+        {/* VS AI — with LEVEL display */}
         <div className="modern-card ai-card-horizontal" onClick={() => onStartGame('vs-ai')}>
           <div className="ai-icon-wrapper">
-            <svg className="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg className="card-icon" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="11" width="18" height="10" rx="2" />
-              <circle cx="8.5" cy="16" r="1.5" fill="currentColor" />
-              <circle cx="15.5" cy="16" r="1.5" fill="currentColor" />
-              <path d="M12 2v6M9 4h6" strokeLinecap="round" />
+              <circle cx="12" cy="5" r="2" />
+              <path d="M12 7v4" />
+              <line x1="8" y1="16" x2="8" y2="16" />
+              <line x1="16" y1="16" x2="16" y2="16" />
             </svg>
           </div>
           <div className="ai-text-content">
             <span className="card-label-large">VS AI</span>
-            <span className="ai-subtext">OFFLINE BOT MATCH</span>
+            <span className="ai-subtext">LEVEL {currentLevel} / 5</span>
           </div>
         </div>
       </div>
 
+      {/* CREATE ROOM MODAL */}
       {showCreateModal && (
-        <div className="modal-overlay">
-          <div className="modal-content modern-modal">
+        <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
+          <div className="modern-modal" onClick={(e) => e.stopPropagation()}>
             <h2>ROOM CODE</h2>
-            <div className="code-display">{roomCode}</div>
-            <p>Share code with your opponent!</p>
-            {/* NEW: Passed `true` because this user is the HOST */}
-            <button className="modern-modal-btn" onClick={() => onStartGame('multiplayer', roomCode, true)}>
-              ENTER ROOM
+            <p>Share this code with your friend</p>
+            <div className="code-display">{generatedCode}</div>
+            <button className="modern-modal-btn" onClick={handleConfirmCreate}>
+              START
             </button>
-            <button className="modern-text-btn" onClick={() => setShowCreateModal(false)}>Cancel</button>
+            <button className="modern-text-btn" onClick={() => setShowCreateModal(false)}>
+              CANCEL
+            </button>
           </div>
         </div>
       )}
 
+      {/* JOIN ROOM MODAL */}
       {showJoinModal && (
-        <div className="modal-overlay">
-          <div className="modal-content modern-modal">
-            <h2>JOIN ROOM</h2>
-            <input 
-              type="number" 
+        <div className="modal-overlay" onClick={() => setShowJoinModal(false)}>
+          <div className="modern-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>ENTER CODE</h2>
+            <p>Ask your friend for the room code</p>
+            <input
+              type="number"
               className="code-input"
               placeholder="0000"
-              value={joinInput}
-              onChange={(e) => setJoinInput(e.target.value.slice(0, 4))}
+              maxLength={4}
+              value={joinCode}
+              onChange={(e) => setJoinCode(e.target.value.slice(0, 4))}
+              autoFocus
             />
-            {/* NEW: Passed `false` because this user is a JOINER */}
-            <button 
-              className="modern-modal-btn" 
-              disabled={joinInput.length !== 4}
-              onClick={() => onStartGame('multiplayer', joinInput, false)}
+            <button
+              className="modern-modal-btn"
+              disabled={joinCode.length !== 4}
+              onClick={handleConfirmJoin}
             >
-              JOIN GAME
+              JOIN
             </button>
-            <button className="modern-text-btn" onClick={() => setShowJoinModal(false)}>Cancel</button>
+            <button className="modern-text-btn" onClick={() => setShowJoinModal(false)}>
+              CANCEL
+            </button>
           </div>
         </div>
       )}
