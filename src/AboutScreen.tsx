@@ -1,6 +1,13 @@
 // src/AboutScreen.tsx
 import './AboutScreen.css'
 
+// Import gambar dari assets
+import PUY from './assets/PUY.png'
+import PAY from './assets/PAY.png'
+import PEY from './assets/PEY.png'
+import PIY from './assets/PIY.png'
+import POY from './assets/POY.png'
+
 interface AboutScreenProps {
   onNavigate: (screen: 'home' | 'play' | 'about') => void
 }
@@ -9,14 +16,15 @@ interface KartuInfo {
   kode: string
   nama: string
   kelas: string
+  gambar: string // Properti untuk menyimpan gambar
 }
 
 const DAFTAR_KARTU: KartuInfo[] = [
-  { kode: 'PUY', nama: 'Kartu Biru',   kelas: 'blue'   },
-  { kode: 'PAY', nama: 'Kartu Merah',  kelas: 'red'  },
-  { kode: 'PEY', nama: 'Kartu Coklat', kelas: 'brown' },
-  { kode: 'PIY', nama: 'Kartu Pink',   kelas: 'pink'   },
-  { kode: 'POY', nama: 'Kartu Hijau',  kelas: 'green'  },
+  { kode: 'PUY', nama: 'Kartu Biru',   kelas: 'blue',   gambar: PUY },
+  { kode: 'PAY', nama: 'Kartu Merah',  kelas: 'red',    gambar: PAY },
+  { kode: 'PEY', nama: 'Kartu Coklat', kelas: 'brown',  gambar: PEY },
+  { kode: 'PIY', nama: 'Kartu Pink',   kelas: 'pink',   gambar: PIY },
+  { kode: 'POY', nama: 'Kartu Hijau',  kelas: 'green',  gambar: POY },
 ]
 
 interface AturanInfo {
@@ -43,8 +51,13 @@ export default function AboutScreen({ onNavigate }: AboutScreenProps) {
         <div className="kartu-grid">
           {DAFTAR_KARTU.map((kartu) => (
             <div className="kartu-item" key={kartu.kode}>
-              <span className={`card-code ${kartu.kelas}`}>{kartu.kode}</span>
-              <span className="kartu-nama">= {kartu.nama}</span>
+              <img 
+                src={kartu.gambar} 
+                alt={kartu.nama} 
+                className="kartu-gambar" 
+              />
+              {/* Menambahkan class warna ke dalam className teks */}
+              <span className={`kartu-nama ${kartu.kelas}`}>{kartu.kode}</span>
             </div>
           ))}
         </div>

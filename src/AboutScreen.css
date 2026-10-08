@@ -1,92 +1,219 @@
 /* src/AboutScreen.css */
 
+/* ================= CONTAINER UTAMA (SCROLL HANYA DI SINI) ================= */
 .about-container {
-  /* Samakan background dan layout dengan PlayScreen */
-  background-image: url('./assets/bgimage.jpeg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  
-  /* Layout Mobile-App Style (sama seperti PlayScreen) */
+  height: 100vh; 
+  height: 100dvh; 
+  width: 100%;
+  overflow-y: auto; 
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; 
+  padding: 20px 10px;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch; 
+
+  /* ================= BACKGROUND PAGE ================= */
+  background-image: url('./assets/bgimage.jpeg'); 
+  background-size: fixed;       
+  background-position: center;  
+  background-repeat: no-repeat; 
+  background-attachment: fixed; 
+}
+
+/* Panel Kaca */
+.about-glass-panel {
+  width: 100%;
+  max-width: 500px;
+  padding: 15px 15px 30px 15px; 
+  margin: 0 auto;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.4); 
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* ================= JUDUL & TEKS ================= */
+h2 {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #fff;
+  font-weight: bold; /* <--- DITAMBAHKAN */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.section-note {
+  font-size: 0.85rem;
+  margin: 10px 0;
+  line-height: 1.4;
+  text-align: center;
+  color: #ddd;
+  font-weight: bold; /* <--- DITAMBAHKAN */
+}
+
+.seri-note {
+  margin-top: 15px;
+  margin-bottom: 20px;
+  font-weight: bold; /* <--- DITAMBAHKAN */
+}
+
+/* ================= DAFTAR KARTU (GRID 3 KOLOM) ================= */
+.kartu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 10px; 
+  margin-bottom: 15px;
+  justify-items: center; 
+  width: 100%;
+}
+
+.kartu-item {
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+  width: 100%;
+}
+
+.kartu-gambar {
+  width: 70px;
+  height: 105px;
+  max-width: 70px;
+  max-height: 105px;
+  object-fit: contain; 
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.kartu-gambar:hover {
+  transform: scale(1.05);
+}
+
+.kartu-nama {
+  font-weight: bold;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Warna teks nama kartu di bawah gambar */
+.kartu-nama.blue { color: #4DA6FF; text-shadow: 0 0 5px rgba(77, 166, 255, 0.5); }
+.kartu-nama.red { color: #FF6B6B; text-shadow: 0 0 5px rgba(255, 107, 107, 0.5); }
+.kartu-nama.brown { color: #D2A679; text-shadow: 0 0 5px rgba(210, 166, 121, 0.5); }
+.kartu-nama.pink { color: #FF99CC; text-shadow: 0 0 5px rgba(255, 153, 204, 0.5); }
+.kartu-nama.green { color: #66DE66; text-shadow: 0 0 5px rgba(102, 222, 102, 0.5); }
+
+/* ================= ATURAN MENANG (BADGE KARTU) ================= */
+.rule-list {
   display: flex;
   flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.rule-row {
+  font-size: 0.85rem;
+  display: flex;
+  flex-wrap: wrap; 
   justify-content: center;
   align-items: center;
-  height: 100dvh;
-  max-width: 450px;
-  margin: 0 auto;
-  padding: 20px;
-  box-sizing: border-box;
-  position: relative;
-  
-  /* Font dan warna dasar */
-  font-family: 'Inter', 'Segoe UI', sans-serif;
-  color: #ffffff;
-  text-align: center;
+  gap: 6px;
+  color: #fff;
+  font-weight: bold; /* <--- DITAMBAHKAN */
 }
 
-/* Panel Kaca (Glass Panel) untuk membungkus konten */
-.about-glass-panel {
-  position: relative;
-  z-index: 1;
-  background: rgba(20, 30, 25, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-  padding: 40px 25px;
-  width: 100%;
-  max-width: 340px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+.rule-text {
+  color: #ddd;
+  font-style: italic;
+  font-weight: bold; /* <--- DITAMBAHKAN */
+}
+
+.chip-group {
+  display: flex;
+  gap: 4px;
+}
+
+/* Styling badge untuk kode kartu (PUY, PAY, dll) di aturan menang */
+.card-code {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  text-align: center;
+  min-width: 35px;
+}
+
+/* Warna badge berdasarkan kelas kartu */
+.card-code.blue {
+  background: rgba(77, 166, 255, 0.25);
+  color: #4DA6FF;
+  border: 1px solid #4DA6FF;
+}
+.card-code.red {
+  background: rgba(255, 107, 107, 0.25);
+  color: #FF6B6B;
+  border: 1px solid #FF6B6B;
+}
+.card-code.brown {
+  background: rgba(210, 166, 121, 0.25);
+  color: #D2A679;
+  border: 1px solid #D2A679;
+}
+.card-code.pink {
+  background: rgba(255, 153, 204, 0.25);
+  color: #FF99CC;
+  border: 1px solid #FF99CC;
+}
+.card-code.green {
+  background: rgba(102, 222, 102, 0.25);
+  color: #66DE66;
+  border: 1px solid #66DE66;
+}
+
+/* ================= CARA BERMAIN ================= */
+.langkah-list {
+  font-size: 0.85rem;
+  padding-left: 20px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 6px; 
+  color: #eee;
+  font-weight: bold; /* <--- DITAMBAHKAN */
 }
 
-/* Styling Judul */
-.about-glass-panel h1 {
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: 2px;
-  margin: 0 0 15px 0;
-  color: #55efc4; /* Hijau neon khas PlayScreen */
-  text-transform: uppercase;
-  text-shadow: 0 0 15px rgba(85, 239, 196, 0.4);
+.langkah-list li {
+  line-height: 1.4;
 }
 
-/* Styling Paragraf */
-.about-glass-panel p {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 30px;
-}
-
-.modern-menu-btn:active {
-  transform: scale(0.95);
-  box-shadow: 0 4px 10px rgba(0, 184, 148, 0.2);
-}
-
+/* ================= TOMBOL RETURN ================= */
 .about-btn {
-  color: #e70f62; /* Pink Muda */
-  text-shadow: 0 0 15px rgba(85, 239, 196, 0.5);
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: bold; /* <--- DITAMBAHKAN */
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
-.rule-text{
-  color: yellow;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: bold;
+.about-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-
-.card-code {
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  margin-right: 6px;
-}
-
-.card-code.blue  { color: #3b82f6; }  /* PUY - Biru */
-.card-code.red   { color: #ef4444; }  /* PAY - Merah */
-.card-code.brown { color: #b45309; }  /* PEY - Coklat */
-.card-code.pink  { color: #ec4899; }  /* PIY - Pink */
-.card-code.green { color: #22c55e; }  /* POY - Hijau */
-

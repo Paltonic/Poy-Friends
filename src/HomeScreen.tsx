@@ -61,7 +61,7 @@ export default function HomeScreen({ onNavigate }: HomeScreenProps) {
           PLAY
         </button>
         <button
-          className="modern-menu-btn about-btn"
+          className="modern-menu-btn abouts-btn"
           onClick={() => onNavigate('about')}
         >
           ABOUT
