@@ -19,11 +19,12 @@ const RETRACT_ANIM_MS = 600
 
 type Phase = 'waiting' | 'placing' | 'revealing' | 'scoring' | 'retracting' | 'gameover'
 
+// FIX: renamed `onExit` -> `onQuit` to match the destructured prop name below
 interface GameScreenProps {
   mode: 'vs-ai' | 'multiplayer'
   roomCode?: string
   isHost?: boolean
-  onExit: () => void
+  onQuit: () => void
 }
 
 const CartoonFistSVG = ({ className = '' }: { className?: string }) => (
@@ -596,4 +597,3 @@ export default function GameScreen({ mode, roomCode, isHost = false, onQuit }: G
     </div>
   )
 }
-
