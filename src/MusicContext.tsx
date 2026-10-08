@@ -1,5 +1,5 @@
 // src/MusicContext.tsx
-import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useRef, useCallback, useMemo, type ReactNode } from 'react'
 import bgm from './assets/bgm.mp3'
 
 interface MusicContextType {
@@ -11,74 +11,96 @@ interface MusicContextType {
 
 const MusicContext = createContext<MusicContextType | undefined>(undefined)
 
+const MUTE_KEY = 'poy_music_muted'
+
 export function MusicProvider({ children }: { children: ReactNode }) {
+  const [muted, setMuted] = useState<boolean>(() => {
+    try { return localStorage.getItem(MUTE_KEY) === '1' } catch { return false }
+  })
   const [isPlaying, setIsPlaying] = useState(false)
-  const [hasUserEnabled, setHasUserEnabled] = useState(true) // user preference (mute/unmute)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const mutedRef = useRef(muted)
 
+  useEffect(() => { mutedRef.current = muted }, [muted])
+
+  // Audio dibuat SEKALI. Tidak pernah dibuat ulang → tidak ada timpa musik.
   useEffect(() => {
-    audioRef.current = new Audio(bgm)
-    audioRef.current.loop = true
-    audioRef.current.volume = 0.4
+    const audio = new Audio(bgm)
+    audio.loop = true
+    audio.volume = 0.4
+    audioRef.current = audio
 
-    audioRef.current.play().then(() => {
-      setIsPlaying(true)
-    }).catch(() => {
-      setIsPlaying(false)
-    })
+    const syncPlay = () => setIsPlaying(true)
+    const syncPause = () => setIsPlaying(false)
+    audio.addEventListener('play', syncPlay)
+    audio.addEventListener('pause', syncPause)
 
-    const handleFirstInteraction = () => {
-      if (audioRef.current && audioRef.current.paused && hasUserEnabled) {
-        audioRef.current.play().then(() => {
-          setIsPlaying(true)
-          document.removeEventListener('click', handleFirstInteraction)
-          document.removeEventListener('touchstart', handleFirstInteraction)
-        }).catch(() => {})
+    // Coba autoplay (mungkin diblokir browser)
+    if (!mutedRef.current) audio.play().catch(() => setIsPlaying(false))
+
+    // Retry pada gesture pertama user (mengatasi autoplay block)
+    const removeGestures = () => {
+      window.removeEventListener('pointerdown', onGesture)
+      window.removeEventListener('keydown', onGesture)
+      window.removeEventListener('touchstart', onGesture)
+    }
+    const onGesture = () => {
+      if (mutedRef.current) return
+      if (audio.paused) {
+        audio.play()
+          .then(() => { setIsPlaying(true); removeGestures() })
+          .catch(() => {})
+      } else {
+        removeGestures()
       }
     }
-
-    document.addEventListener('click', handleFirstInteraction)
-    document.addEventListener('touchstart', handleFirstInteraction)
+    window.addEventListener('pointerdown', onGesture)
+    window.addEventListener('keydown', onGesture)
+    window.addEventListener('touchstart', onGesture)
 
     return () => {
-      document.removeEventListener('click', handleFirstInteraction)
-      document.removeEventListener('touchstart', handleFirstInteraction)
+      removeGestures()
+      audio.removeEventListener('play', syncPlay)
+      audio.removeEventListener('pause', syncPause)
+      audio.pause()
+      audioRef.current = null
     }
-  }, [hasUserEnabled])
+  }, []) // ← JANGAN tambah deps, biar audio tidak dibuat ulang
 
-  const toggleMusic = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause()
-        setIsPlaying(false)
-        setHasUserEnabled(false)
-      } else {
-        audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {})
-        setHasUserEnabled(true)
-      }
+  const toggleMusic = useCallback(() => {
+    const audio = audioRef.current
+    if (!audio) return
+    if (!audio.paused) {
+      audio.pause()
+      setMuted(true)
+      try { localStorage.setItem(MUTE_KEY, '1') } catch {}
+    } else {
+      setMuted(false)
+      try { localStorage.setItem(MUTE_KEY, '0') } catch {}
+      audio.play().then(() => setIsPlaying(true)).catch(() => {})
     }
-  }
+  }, [])
 
-  // Dipakai oleh App.tsx saat masuk halaman Game
-  const pauseMusic = () => {
-    if (audioRef.current && !audioRef.current.paused) {
-      audioRef.current.pause()
-      setIsPlaying(false)
+  // Pause dari posisi sekarang. Audio element tetap hidup.
+  const pauseMusic = useCallback(() => {
+    const audio = audioRef.current
+    if (audio && !audio.paused) audio.pause()
+  }, [])
+
+  // Resume dari posisi terakhir (bukan restart). Kalau di-mute manual, tidak resume.
+  const resumeMusic = useCallback(() => {
+    const audio = audioRef.current
+    if (audio && audio.paused && !mutedRef.current) {
+      audio.play().then(() => setIsPlaying(true)).catch(() => {})
     }
-  }
+  }, [])
 
-  // Dipakai oleh App.tsx saat keluar dari halaman Game
-  const resumeMusic = () => {
-    if (audioRef.current && hasUserEnabled && audioRef.current.paused) {
-      audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {})
-    }
-  }
-
-  return (
-    <MusicContext.Provider value={{ isPlaying, toggleMusic, pauseMusic, resumeMusic }}>
-      {children}
-    </MusicContext.Provider>
+  const value = useMemo(
+    () => ({ isPlaying, toggleMusic, pauseMusic, resumeMusic }),
+    [isPlaying, toggleMusic, pauseMusic, resumeMusic]
   )
+
+  return <MusicContext.Provider value={value}>{children}</MusicContext.Provider>
 }
 
 export function useMusic() {
