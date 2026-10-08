@@ -1,6 +1,6 @@
 // src/App.tsx
 import { useState, useEffect } from 'react'
-import { MusicProvider, useMusic } from './MusicContext'
+import { useMusic } from './MusicContext'   // ← HANYA useMusic, JANGAN MusicProvider
 
 import HomeScreen from './HomeScreen'
 import PlayScreen from './PlayScreen'
@@ -15,19 +15,14 @@ interface GameConfig {
   isHost?: boolean
 }
 
-/**
- * AppShell adalah komponen DALAM MusicProvider,
- * sehingga boleh memakai useMusic().
- */
-function AppShell() {
+export default function App() {
   const [screen, setScreen] = useState<Screen>('home')
   const [gameConfig, setGameConfig] = useState<GameConfig | null>(null)
 
   const { pauseMusic, resumeMusic } = useMusic()
 
-  // ⚠️ KUNCI: pause saat masuk game, resume saat keluar game.
-  //    Audio element-nya SAMA → resume lanjut dari posisi terakhir,
-  //    bukan mulai dari 0. Tidak ada audio baru yang dibuat.
+  // pause saat masuk game, resume saat keluar game.
+  // Audio element-nya SAMA → resume lanjut dari posisi terakhir.
   useEffect(() => {
     if (screen === 'game') {
       pauseMusic()
@@ -36,7 +31,6 @@ function AppShell() {
     }
   }, [screen, pauseMusic, resumeMusic])
 
-  // Dipanggil PlayScreen saat user memilih VS AI / Create / Join
   const handleStartGame = (
     mode: 'vs-ai' | 'multiplayer',
     roomCode?: string,
@@ -46,7 +40,6 @@ function AppShell() {
     setScreen('game')
   }
 
-  // Dipanggil GameScreen saat user keluar dari game
   const handleExitGame = () => {
     setGameConfig(null)
     setScreen('home')
@@ -78,13 +71,5 @@ function AppShell() {
         />
       )}
     </>
-  )
-}
-
-export default function App() {
-  return (
-    <MusicProvider>
-      <AppShell />
-    </MusicProvider>
   )
 }
