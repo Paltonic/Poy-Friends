@@ -19,12 +19,12 @@ const RETRACT_ANIM_MS = 600
 
 type Phase = 'waiting' | 'placing' | 'revealing' | 'scoring' | 'retracting' | 'gameover'
 
-// FIX: renamed `onExit` -> `onQuit` to match the destructured prop name below
+// FIX: prop name is `onExit` to match how App.tsx calls <GameScreen />
 interface GameScreenProps {
   mode: 'vs-ai' | 'multiplayer'
   roomCode?: string
   isHost?: boolean
-  onQuit: () => void
+  onExit: () => void
 }
 
 const CartoonFistSVG = ({ className = '' }: { className?: string }) => (
@@ -336,7 +336,7 @@ function useMultiplayerGame(roomCode: string | undefined, isHost: boolean): Game
 // =====================================================
 // MAIN COMPONENT
 // =====================================================
-export default function GameScreen({ mode, roomCode, isHost = false, onQuit }: GameScreenProps) {
+export default function GameScreen({ mode, roomCode, isHost = false, onExit }: GameScreenProps) {
   const engine = mode === 'vs-ai' ? useAIGame() : useMultiplayerGame(roomCode, isHost)
 
   const {
@@ -389,7 +389,7 @@ export default function GameScreen({ mode, roomCode, isHost = false, onQuit }: G
       const elapsed = Date.now() - startTimeRef.current
       const progress = Math.min(elapsed / 1500, 1)
       setPressProgress(progress)
-      if (progress >= 1) { isPressing.current = false; onQuit() }
+      if (progress >= 1) { isPressing.current = false; onExit() }
       else requestRef.current = requestAnimationFrame(animate)
     }
     requestRef.current = requestAnimationFrame(animate)
@@ -411,14 +411,14 @@ export default function GameScreen({ mode, roomCode, isHost = false, onQuit }: G
           <div className="modern-waiting-card">
             <h2 style={{ color: '#ff7675' }}>ROOM NOT FOUND</h2>
             <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '20px', fontSize: '0.9rem' }}>Check the code and try again.</p>
-            <button className="error-return-btn" onClick={onQuit}>RETURN</button>
+            <button className="error-return-btn" onClick={onExit}>RETURN</button>
           </div>
         </div>
       )}
 
       {isWaiting && (
         <div className="waiting-screen-overlay">
-          <button className="modern-back-btn fixed-top-left" onClick={onQuit} aria-label="Back">
+          <button className="modern-back-btn fixed-top-left" onClick={onExit} aria-label="Back">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
             </svg>
@@ -458,7 +458,7 @@ export default function GameScreen({ mode, roomCode, isHost = false, onQuit }: G
                 Waiting for host to restart...
               </p>
             )}
-            <button className="error-return-btn" style={{ marginTop: '12px' }} onClick={onQuit}>
+            <button className="error-return-btn" style={{ marginTop: '12px' }} onClick={onExit}>
               QUIT
             </button>
           </div>
