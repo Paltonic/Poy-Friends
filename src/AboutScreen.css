@@ -71,3 +71,22 @@
   color: #e70f62; /* Pink Muda */
   text-shadow: 0 0 15px rgba(85, 239, 196, 0.5);
 }
+
+.rule-text{
+  color: yellow;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+
+.card-code {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-right: 6px;
+}
+
+.card-code.blue  { color: #3b82f6; }  /* PUY - Biru */
+.card-code.red   { color: #ef4444; }  /* PAY - Merah */
+.card-code.brown { color: #b45309; }  /* PEY - Coklat */
+.card-code.pink  { color: #ec4899; }  /* PIY - Pink */
+.card-code.green { color: #22c55e; }  /* POY - Hijau */
+

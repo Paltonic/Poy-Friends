@@ -5,23 +5,93 @@ interface AboutScreenProps {
   onNavigate: (screen: 'home' | 'play' | 'about') => void
 }
 
+interface KartuInfo {
+  kode: string
+  nama: string
+  kelas: string
+}
+
+const DAFTAR_KARTU: KartuInfo[] = [
+  { kode: 'PUY', nama: 'Kartu Biru',   kelas: 'blue'   },
+  { kode: 'PAY', nama: 'Kartu Merah',  kelas: 'red'  },
+  { kode: 'PEY', nama: 'Kartu Coklat', kelas: 'brown' },
+  { kode: 'PIY', nama: 'Kartu Pink',   kelas: 'pink'   },
+  { kode: 'POY', nama: 'Kartu Hijau',  kelas: 'green'  },
+]
+
+interface AturanInfo {
+  kode: string
+  kelas: string
+  menang: { kode: string; kelas: string }[]
+}
+
+const ATURAN_MENANG: AturanInfo[] = [
+  { kode: 'PUY', kelas: 'blue',   menang: [{ kode: 'POY', kelas: 'green' }] },
+  { kode: 'PAY', kelas: 'red',  menang: [{ kode: 'PEY', kelas: 'brown' }, { kode: 'PUY', kelas: 'blue' }] },
+  { kode: 'PEY', kelas: 'brown', menang: [{ kode: 'PIY', kelas: 'pink' }, { kode: 'PUY', kelas: 'blue' }] },
+  { kode: 'PIY', kelas: 'pink',   menang: [{ kode: 'PAY', kelas: 'red' }, { kode: 'PUY', kelas: 'blue' }] },
+  { kode: 'POY', kelas: 'green',  menang: [{ kode: 'PEY', kelas: 'brown' }, { kode: 'PAY', kelas: 'red' }, { kode: 'PIY', kelas: 'pink' }] },
+]
+
 export default function AboutScreen({ onNavigate }: AboutScreenProps) {
   return (
     <div className="about-container">
-      {/* Bungkus konten dengan about-glass-panel */}
       <div className="about-glass-panel">
-        <h1>Tentang PoyNFriends</h1>
-        <p>
-          PoyNFriends adalah game kartu seru di mana kamu bisa bermain melawan AI 
-          atau menantang temanmu secara multiplayer. Kumpulkan kemenangan dan 
-          naikkan levelmu hingga level 5!
+
+        {/* ================= DAFTAR KARTU ================= */}
+        <h2>Daftar Kartu</h2>
+        <div className="kartu-grid">
+          {DAFTAR_KARTU.map((kartu) => (
+            <div className="kartu-item" key={kartu.kode}>
+              <span className={`card-code ${kartu.kelas}`}>{kartu.kode}</span>
+              <span className="kartu-nama">= {kartu.nama}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* ================= ATURAN MENANG ================= */}
+        <p className="section-note">
+          Setiap kartu hanya bisa mengalahkan kartu tertentu. Perhatikan warnanya baik-baik!
         </p>
-        
-        <button 
-          className="modern-menu-btn about-btn" 
+
+        <div className="rule-list">
+          {ATURAN_MENANG.map((aturan) => (
+            <div className="rule-row" key={aturan.kode}>
+              <span className={`card-code ${aturan.kelas}`}>{aturan.kode}</span>
+              <span className="rule-text"> Mengalahkan </span>
+              <span className="chip-group">
+                {aturan.menang.map((target) => (
+                  <span className={`card-code ${target.kelas}`} key={target.kode}>
+                    {target.kode}
+                  </span>
+                ))}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <p className="section-note seri-note">
+          Jika kedua pemain mengeluarkan kartu yang <strong>sama</strong>, maka hasilnya <strong>SERI</strong>
+          <span> tidak ada poin untuk siapa pun.</span>
+        </p>
+
+        {/* ================= CARA BERMAIN ================= */}
+        <h2>Cara Bermain</h2>
+        <ol className="langkah-list">
+          <li>Tekan tombol <strong>PLAY</strong> di menu utama.</li>
+          <li>Pilih salah satu kartu dari tanganmu (PUY, PAY, PEY, PIY, atau POY).</li>
+          <li>Tekan ke layar lalu tunggu kartu lawan terbuka.</li>
+          <li>Kartumu akan dibandingkan dengan kartu lawan.</li>
+          <li>Kalau kartumu menang, kamu dapat <strong>1 poin</strong>.</li>
+          <li>Tarik kartu mu dan siap untuk ronde berikutnya</li>
+          <li>Kumpulkan 5 poin untuk naik level!</li>
+        </ol>
+
+        <button
+          className="modern-menu-btn about-btn"
           onClick={() => onNavigate('home')}
         >
-          KEMBALI
+          RETURN
         </button>
       </div>
     </div>
