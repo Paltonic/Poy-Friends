@@ -1,5 +1,6 @@
 // src/AboutScreen.tsx
 import './AboutScreen.css'
+import { useMusic } from './MusicContext' // Import hook
 
 // Import gambar dari assets
 import PUY from './assets/PUY.png'
@@ -16,7 +17,7 @@ interface KartuInfo {
   kode: string
   nama: string
   kelas: string
-  gambar: string // Properti untuk menyimpan gambar
+  gambar: string
 }
 
 const DAFTAR_KARTU: KartuInfo[] = [
@@ -42,21 +43,23 @@ const ATURAN_MENANG: AturanInfo[] = [
 ]
 
 export default function AboutScreen({ onNavigate }: AboutScreenProps) {
+  // Gunakan hook musik
+  const { isPlaying, toggleMusic } = useMusic()
+
   return (
     <div className="about-container">
-      <div className="about-glass-panel">
+      {/* Tombol Toggle Musik */}
+      <button className="music-toggle-btn" onClick={toggleMusic} title="Nyalakan/Matikan Musik">
+        {isPlaying ? '🔊' : '🔇'}
+      </button>
 
+      <div className="about-glass-panel">
         {/* ================= DAFTAR KARTU ================= */}
         <h2>Daftar Kartu</h2>
         <div className="kartu-grid">
           {DAFTAR_KARTU.map((kartu) => (
             <div className="kartu-item" key={kartu.kode}>
-              <img 
-                src={kartu.gambar} 
-                alt={kartu.nama} 
-                className="kartu-gambar" 
-              />
-              {/* Menambahkan class warna ke dalam className teks */}
+              <img src={kartu.gambar} alt={kartu.nama} className="kartu-gambar" />
               <span className={`kartu-nama ${kartu.kelas}`}>{kartu.kode}</span>
             </div>
           ))}

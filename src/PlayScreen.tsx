@@ -1,9 +1,9 @@
+// src/PlayScreen.tsx
 import { useState } from 'react'
 import './PlayScreen.css'
 import { getLevel } from './utils/levelSytem'
-// PENTING: Sesuaikan path import ini dengan lokasi file supabase client milikmu
-// Contoh: import { supabase } from '../lib/supabaseClient'
-import { supabase } from './supabaseClient' 
+import { supabase } from './supabaseClient'
+import { useMusic } from './MusicContext' // Import hook
 
 interface PlayScreenProps {
   onBack: () => void
@@ -16,13 +16,14 @@ export default function PlayScreen({ onBack, onStartGame }: PlayScreenProps) {
   const [generatedCode, setGeneratedCode] = useState('')
   const [joinCode, setJoinCode] = useState('')
   
-  // State tambahan untuk menangani proses ke Supabase
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const currentLevel = getLevel()
 
-  // 1. Buka modal Create dan generate kode acak
+  // Gunakan hook musik
+  const { isPlaying, toggleMusic } = useMusic()
+
   const handleCreateRoom = () => {
     const code = Math.floor(1000 + Math.random() * 9000).toString()
     setGeneratedCode(code)
@@ -30,12 +31,10 @@ export default function PlayScreen({ onBack, onStartGame }: PlayScreenProps) {
     setShowCreateModal(true)
   }
 
-  // 2. Konfirmasi Create: Simpan kode ke Supabase
   const handleConfirmCreate = async () => {
     setIsLoading(true)
     setErrorMessage('')
 
-    // Simpan ke tabel 'rooms'
     const { error } = await supabase
       .from('rooms')
       .insert([{ code: generatedCode }])
@@ -51,25 +50,22 @@ export default function PlayScreen({ onBack, onStartGame }: PlayScreenProps) {
     }
   }
 
-  // 3. Buka modal Join
   const handleJoinRoom = () => {
     setJoinCode('')
     setErrorMessage('')
     setShowJoinModal(true)
   }
 
-  // 4. Konfirmasi Join: Cek apakah kode ada di Supabase
   const handleConfirmJoin = async () => {
     if (joinCode.length === 4) {
       setIsLoading(true)
       setErrorMessage('')
 
-      // Cek kode di tabel 'rooms'
       const { data, error } = await supabase
         .from('rooms')
         .select('code')
         .eq('code', joinCode)
-        .maybeSingle() // Gunakan maybeSingle agar tidak error jika data kosong
+        .maybeSingle()
 
       setIsLoading(false)
 
@@ -77,10 +73,8 @@ export default function PlayScreen({ onBack, onStartGame }: PlayScreenProps) {
         console.error('Error joining room:', error)
         setErrorMessage('Terjadi kesalahan. Coba lagi.')
       } else if (!data) {
-        // Jika data tidak ditemukan (tabel kosong / kode salah)
         setErrorMessage('ROOM NOT FOUND. Check the code and try again.')
       } else {
-        // Jika ketemu
         setShowJoinModal(false)
         onStartGame('multiplayer', joinCode, false)
       }
@@ -89,6 +83,11 @@ export default function PlayScreen({ onBack, onStartGame }: PlayScreenProps) {
 
   return (
     <div className="play-screen-container">
+      {/* Tombol Toggle Musik */}
+      <button className="music-toggle-btn" onClick={toggleMusic} title="Nyalakan/Matikan Musik">
+        {isPlaying ? '🔊' : '🔇'}
+      </button>
+
       <button className="modern-back-btn" onClick={onBack} aria-label="Back">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
           <line x1="19" y1="12" x2="5" y2="12" />
@@ -97,7 +96,7 @@ export default function PlayScreen({ onBack, onStartGame }: PlayScreenProps) {
       </button>
 
       <div className="play-grid">
-        {/* CREATE ROOM */}
+        {/* ... SISA KODE JSX ANDA SAMA SEPERTI SEBELUMNYA ... */}
         <div className="modern-card create-card" onClick={handleCreateRoom}>
           <svg className="card-icon" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="12" y1="5" x2="12" y2="19" />
@@ -106,7 +105,6 @@ export default function PlayScreen({ onBack, onStartGame }: PlayScreenProps) {
           <span className="card-label">Create</span>
         </div>
 
-        {/* JOIN ROOM */}
         <div className="modern-card join-card" onClick={handleJoinRoom}>
           <svg className="card-icon" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
@@ -116,7 +114,6 @@ export default function PlayScreen({ onBack, onStartGame }: PlayScreenProps) {
           <span className="card-label">Join</span>
         </div>
 
-        {/* VS AI */}
         <div className="modern-card ai-card-horizontal" onClick={() => onStartGame('vs-ai')}>
           <div className="ai-icon-wrapper">
             <svg className="card-icon" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

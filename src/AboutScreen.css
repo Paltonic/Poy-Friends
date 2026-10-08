@@ -205,6 +205,50 @@ h2 {
 }
 
 /* ================= TOMBOL RETURN ================= */
+.main-menu { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 18px; /* Jarak antar tombol */
+  width: 100%; 
+  max-width: 260px; /* Lebar tombol disesuaikan agar mirip gambar kiri */
+  margin-bottom: 40px;
+  z-index: 10; 
+}
+
+.modern-menu-btn {
+  /* Background Kaca Gelap */
+  background: rgba(20, 30, 25, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  /* Border tipis transparan menyeluruh (bukan hanya bawah) */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  /* Sudut membulat sempurna (Pill shape) */
+  border-radius: 50px; 
+  
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-size: 1.3rem; /* Teks lebih besar dan tebal */
+  font-weight: 900;
+  padding: 18px 24px; /* Padding lebih tebal agar tombol terlihat kokoh */
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.modern-menu-btn:active {
+  transform: scale(0.95);
+  background: rgba(30, 40, 35, 0.9);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* --- Warna Teks & Glow --- */
 .about-btn {
   color: #74b9ff; /* Biru Terang */
   text-shadow: 0 0 15px rgba(116, 185, 255, 0.5);

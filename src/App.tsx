@@ -1,53 +1,60 @@
 // src/App.tsx
-import { useState } from 'react'
-import HomeScreen from './HomeScreen'
-import PlayScreen from './PlayScreen' // Ini Lobby (Create/Join Room)
-import GameScreen from './GameScreen' // Ini tempat main kartu PUY/PAY
-import AboutScreen from './AboutScreen' 
+import { useState, useEffect } from 'react'
 import './App.css'
+import HomeScreen from './HomeScreen'
+import PlayScreen from './PlayScreen'
+import AboutScreen from './AboutScreen'
+import GameScreen from './GameScreen'
+import { useMusic } from './MusicContext'
 
-function App() {
-  // Tambahkan 'about' dan pisahkan 'play' (lobby) dengan 'game'
-  const [currentScreen, setCurrentScreen] = useState<'home' | 'play' | 'about' | 'game'>('home')
-  
-  const [activeRoomCode, setActiveRoomCode] = useState<string | undefined>(undefined)
-  const [isHost, setIsHost] = useState<boolean>(false)
+type Screen = 'home' | 'play' | 'about' | 'game'
+
+export default function App() {
+  const [screen, setScreen] = useState<Screen>('home')
   const [gameMode, setGameMode] = useState<'vs-ai' | 'multiplayer'>('vs-ai')
+  const [roomCode, setRoomCode] = useState<string | undefined>()
+  const [isHost, setIsHost] = useState<boolean>(false)
 
-  // Fungsi ini dipanggil dari PlayScreen saat pemain klik "Create", "Join", atau "VS AI"
-  const handleStartGame = (mode: 'vs-ai' | 'multiplayer', code?: string, host: boolean = false) => {
-    setActiveRoomCode(code)
-    setIsHost(host)
+  const { pauseMusic, resumeMusic } = useMusic()
+
+  // === Kontrol musik berdasarkan halaman ===
+  useEffect(() => {
+    if (screen === 'game') {
+      pauseMusic()
+    } else {
+      resumeMusic()
+    }
+  }, [screen, pauseMusic, resumeMusic])
+
+  const handleStartGame = (
+    mode: 'vs-ai' | 'multiplayer',
+    code?: string,
+    host?: boolean
+  ) => {
     setGameMode(mode)
-    setCurrentScreen('game') // Pindah ke GameScreen
+    setRoomCode(code)
+    setIsHost(host ?? false)
+    setScreen('game')
   }
 
-  // --- ROUTING LAYAR ---
-  if (currentScreen === 'home') {
-    return <HomeScreen onNavigate={setCurrentScreen} />
-  }
-
-  if (currentScreen === 'play') {
-    // Kirim onBack (untuk kembali ke home) dan onStartGame (untuk masuk ke game)
-    return <PlayScreen onBack={() => setCurrentScreen('home')} onStartGame={handleStartGame} />
-  }
-
-  if (currentScreen === 'about') {
-    return <AboutScreen onNavigate={setCurrentScreen} />
-  }
-
-  if (currentScreen === 'game') {
-    return (
-      <GameScreen 
-        mode={gameMode} 
-        roomCode={activeRoomCode} 
-        isHost={isHost} 
-        onQuit={() => setCurrentScreen('home')} 
-      />
-    )
-  }
-
-  return null
+  return (
+    <>
+      {screen === 'home' && <HomeScreen onNavigate={setScreen} />}
+      {screen === 'play' && (
+        <PlayScreen
+          onBack={() => setScreen('home')}
+          onStartGame={handleStartGame}
+        />
+      )}
+      {screen === 'about' && <AboutScreen onNavigate={setScreen} />}
+      {screen === 'game' && (
+        <GameScreen
+          mode={gameMode}
+          roomCode={roomCode}
+          isHost={isHost}
+          onExit={() => setScreen('home')}
+        />
+      )}
+    </>
+  )
 }
-
-export default App
