@@ -23,7 +23,7 @@ interface GameScreenProps {
   mode: 'vs-ai' | 'multiplayer'
   roomCode?: string
   isHost?: boolean
-  onQuit: () => void
+  onExit: () => void
 }
 
 const CartoonFistSVG = ({ className = '' }: { className?: string }) => (
