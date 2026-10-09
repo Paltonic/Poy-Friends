@@ -72,8 +72,8 @@ export default function HomeScreen({ onNavigate }: HomeScreenProps) {
 
       {/* Credit & versi di sudut kanan bawah */}
       <div className="home-footer">
-        <span className="home-credit">{APP_CREDIT}</span>
         <span className="home-version">{APP_VERSION}</span>
+        <span className="home-credit">{APP_CREDIT}</span>
       </div>
     </div>
   )
