@@ -1,7 +1,7 @@
 /* src/HomeScreen.css */
 
 .home-container { 
-  background-image: url('./assets/bgimage.jpeg');
+  background-image: url('./assets/forestbg.jpeg');
   background-size: cover;      
   background-position: center; 
   background-repeat: no-repeat; 
