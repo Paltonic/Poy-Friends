@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import './HomeScreen.css'
 import { getLevel, LEVEL_STORAGE_KEY, MAX_LEVEL } from './utils/levelSytem'
-import { useMusic } from './MusicContext' // ← sumber tunggal musik
+import { useMusic } from './MusicContext'
 
 import logoImg from './assets/poy_logo.png'
 import playBtnImg from './assets/play_button.png'
@@ -12,13 +12,14 @@ interface HomeScreenProps {
   onNavigate: (screen: 'play' | 'about') => void
 }
 
+const APP_VERSION = 'v1.0.5' // ← ubah manual setiap rilis
+const APP_CREDIT = '© 2026 Frederick Liko'
+
 export default function HomeScreen({ onNavigate }: HomeScreenProps) {
   const [level, setLevel] = useState<number>(getLevel)
 
-  // ✅ Pakai hook global, JANGAN buat new Audio() di sini
   const { isPlaying, toggleMusic } = useMusic()
 
-  // === LOGIKA LEVEL ===
   useEffect(() => {
     setLevel(getLevel())
 
@@ -46,7 +47,6 @@ export default function HomeScreen({ onNavigate }: HomeScreenProps) {
 
   return (
     <div className="home-container">
-      {/* Tombol Toggle Musik */}
       <button className="music-toggle-btn" onClick={toggleMusic} title="Nyalakan/Matikan Musik">
         {isPlaying ? '🔊' : '🔇'}
       </button>
@@ -68,6 +68,12 @@ export default function HomeScreen({ onNavigate }: HomeScreenProps) {
         <button className="image-menu-btn" onClick={() => onNavigate('about')}>
           <img src={aboutBtnImg} alt="About" className="menu-btn-img" />
         </button>
+      </div>
+
+      {/* Credit & versi di sudut kanan bawah */}
+      <div className="home-footer">
+        <span className="home-credit">{APP_CREDIT}</span>
+        <span className="home-version">{APP_VERSION}</span>
       </div>
     </div>
   )

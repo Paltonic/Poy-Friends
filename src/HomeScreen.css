@@ -145,3 +145,44 @@
   background: rgba(255, 255, 255, 0.4);
   transform: scale(1.1);
 }
+
+/* Footer credit & versi - sudut kanan bawah */
+.home-footer {
+  position: absolute;
+  right: 12px;
+  bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.75);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  pointer-events: none; /* biar gak ganggu klik tombol di belakangnya */
+  user-select: none;
+  z-index: 5;
+}
+
+.home-credit {
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.home-version {
+  font-size: 10px;
+  opacity: 0.75;
+}
+
+/* Pastikan .home-container jadi acuan positioning */
+.home-container {
+  position: relative;
+}
+
+/* Opsional: responsif di layar kecil */
+@media (max-width: 480px) {
+  .home-footer {
+    font-size: 10px;
+    right: 8px;
+    bottom: 6px;
+  }
+}
