@@ -12,7 +12,7 @@ interface HomeScreenProps {
   onNavigate: (screen: 'play' | 'about') => void
 }
 
-const APP_VERSION = 'v1.0.6'
+const APP_VERSION = 'v1.0.7'
 const APP_CREDIT = '© 2026 Frederick Liko'
 
 export default function HomeScreen({ onNavigate }: HomeScreenProps) {
